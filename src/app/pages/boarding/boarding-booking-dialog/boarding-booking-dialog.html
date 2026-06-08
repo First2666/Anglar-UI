@@ -1,0 +1,129 @@
+<div class="booking-dialog-2col">
+
+  <!-- LEFT COLUMN: Room Showcase -->
+  <div class="room-showcase" *ngIf="selectedRoomDetails() as details">
+    <div class="carousel-container">
+      <img [src]="details.images[currentImageIndex()]" alt="Room Photo" class="carousel-img"
+        *ngIf="details.images && details.images.length > 0">
+
+      <div class="carousel-no-img" *ngIf="!details.images || details.images.length === 0">
+        <mat-icon>hotel</mat-icon>
+        <span>ไม่มีรูปภาพ</span>
+      </div>
+
+      <!-- Carousel Controls -->
+      <ng-container *ngIf="details.images && details.images.length > 1">
+        <button type="button" class="carousel-nav prev" (click)="prevImage()">
+          <mat-icon>chevron_left</mat-icon>
+        </button>
+        <button type="button" class="carousel-nav next" (click)="nextImage()">
+          <mat-icon>chevron_right</mat-icon>
+        </button>
+        <div class="carousel-dots">
+          <span class="dot" *ngFor="let img of details.images; let i = index"
+            [class.active]="i === currentImageIndex()"></span>
+        </div>
+      </ng-container>
+
+      <div class="room-type-pill">{{ selectedRoomTypeStr() }}</div>
+    </div>
+
+    <div class="showcase-body">
+      <p class="preview-review">「 {{ details.review }} 」</p>
+
+      <div class="amenities-list">
+        <div class="amenity-row" *ngFor="let am of details.amenities">
+          <div class="amenity-icon-wrap" [attr.data-icon]="am.icon">
+            <mat-icon>{{ am.icon }}</mat-icon>
+          </div>
+          <span>{{ am.text }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT COLUMN: Booking Form -->
+  <div class="booking-form-section">
+
+    <div class="dialog-header">
+      <div class="header-icon-wrap">
+        <mat-icon>hotel</mat-icon>
+      </div>
+      <div class="header-text">
+        <h2>จองการฝากเลี้ยง</h2>
+        <p>กรอกข้อมูลเพื่อสำรองห้องพักให้สัตว์เลี้ยง</p>
+      </div>
+      <button mat-icon-button class="close-btn" type="button" (click)="onCancel()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+
+    <form [formGroup]="bookingForm" (ngSubmit)="onSubmit()" class="booking-form" autocomplete="off">
+
+      <!-- Room Type -->
+      <div class="field-group">
+        <label class="field-label">ประเภทห้องพัก</label>
+        <select formControlName="roomType" class="custom-select">
+          <option *ngFor="let type of roomTypes" [value]="type">{{ type }}</option>
+        </select>
+      </div>
+
+      <!-- Pet Selection -->
+      <div class="field-group">
+        <label class="field-label">เลือกสัตว์เลี้ยง <span class="required">*</span></label>
+        <select formControlName="petId" class="custom-select">
+          <option value="" disabled selected>-- เลือกสัตว์เลี้ยง --</option>
+          <option *ngFor="let p of availablePets()" [value]="p.id">{{ p.name }}</option>
+          <option *ngIf="availablePets().length === 0" disabled>ไม่มีสัตว์เลี้ยงที่ว่าง</option>
+        </select>
+      </div>
+
+      <!-- Date Row -->
+      <div class="date-row">
+        <div class="field-group">
+          <label class="field-label">วันที่เข้าพัก</label>
+          <mat-form-field appearance="outline" class="date-field">
+            <input matInput [matDatepicker]="pickerIn" formControlName="checkInDate" placeholder="วว/ดด/ปปปป" (click)="pickerIn.open()" readonly>
+            <mat-datepicker-toggle matIconSuffix [for]="pickerIn"></mat-datepicker-toggle>
+            <mat-datepicker #pickerIn></mat-datepicker>
+          </mat-form-field>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">วันที่เช็คเอาท์</label>
+          <mat-form-field appearance="outline" class="date-field">
+            <input matInput [matDatepicker]="pickerOut" formControlName="checkOutDate" placeholder="วว/ดด/ปปปป" (click)="pickerOut.open()" readonly>
+            <mat-datepicker-toggle matIconSuffix [for]="pickerOut"></mat-datepicker-toggle>
+            <mat-datepicker #pickerOut></mat-datepicker>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <!-- Notes -->
+      <div class="field-group">
+        <label class="field-label">หมายเหตุ / การดูแลพิเศษ</label>
+        <textarea formControlName="notes" class="custom-textarea"
+          placeholder="เช่น อาหารที่แพ้, ยาที่ต้องกิน..."></textarea>
+      </div>
+
+      <!-- Price Summary -->
+      <div class="price-summary">
+        <div class="price-label-row">
+          <span class="price-label-text">ค่าบริการโดยประมาณ</span>
+          <span class="price-value">{{ totalAmount() | currency:'THB':'symbol':'1.0-0' }}</span>
+        </div>
+        <p class="price-note">* ราคานี้ยังไม่รวมค่าบริการเสริม</p>
+      </div>
+
+      <!-- Actions -->
+      <div class="dialog-actions">
+        <button type="button" class="btn-cancel" (click)="onCancel()">ยกเลิก</button>
+        <button type="submit" class="btn-confirm" [disabled]="bookingForm.invalid">
+          <mat-icon>check</mat-icon>
+          ยืนยันการจอง
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>

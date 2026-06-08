@@ -1,0 +1,170 @@
+<div class="register-page">
+  <div class="register-wrapper">
+
+    <!-- Left Branding -->
+    <div class="reg-branding">
+      <div class="brand-logo">
+        <div class="brand-icon"><mat-icon>local_hospital</mat-icon></div>
+        <span class="brand-name">VetCare Pro</span>
+      </div>
+      <div class="branding-content">
+        <h1>สมัครสมาชิก<br>เพื่อเข้าใช้งาน<br>ระบบ</h1>
+        <p>เลือกบทบาทของคุณแล้วกรอกข้อมูลเพื่อสร้างบัญชีใหม่</p>
+      </div>
+      <div class="branding-footer">
+        <p>มีบัญชีแล้ว? <a routerLink="/login" class="link-back">เข้าสู่ระบบ</a></p>
+      </div>
+    </div>
+
+    <!-- Right Form -->
+    <div class="reg-form-area">
+
+      <!-- Success State -->
+      @if (success()) {
+        <div class="success-state">
+          <div class="success-icon">
+            <mat-icon>check_circle</mat-icon>
+          </div>
+          <h2>สมัครสมาชิกสำเร็จ!</h2>
+          <p>กำลังนำคุณไปยังหน้าเข้าสู่ระบบ...</p>
+          <div class="success-spinner"></div>
+        </div>
+      } @else {
+
+      <div class="form-header">
+        <h2>สร้างบัญชีใหม่</h2>
+        <p>กรอกข้อมูลด้านล่างเพื่อเริ่มต้นใช้งาน</p>
+      </div>
+
+      <!-- Role Picker -->
+      <div class="role-section">
+        <label class="section-label">เลือกบทบาท</label>
+        <div class="role-grid">
+          @for (r of roles; track r.value) {
+            <button type="button"
+              class="role-card"
+              [class.selected]="selectedRole() === r.value"
+              [style.--role-color]="r.color"
+              (click)="selectRole(r.value)">
+              <div class="role-icon">
+                <mat-icon>{{ r.icon }}</mat-icon>
+              </div>
+              <span class="role-label">{{ r.label }}</span>
+              <span class="role-desc">{{ r.desc }}</span>
+              @if (selectedRole() === r.value) {
+                <div class="role-check"><mat-icon>check</mat-icon></div>
+              }
+            </button>
+          }
+        </div>
+      </div>
+
+      <!-- Error -->
+      @if (error()) {
+        <div class="reg-error">
+          <mat-icon>error_outline</mat-icon>
+          <span>{{ error() }}</span>
+        </div>
+      }
+
+      <!-- Form -->
+      <form [formGroup]="form" (ngSubmit)="register()" class="reg-form">
+
+        <!-- Full Name -->
+        <div class="field-group">
+          <label>ชื่อ-นามสกุล <span class="required">*</span></label>
+          <div class="input-wrap" [class.focused]="focused['fullName']" [class.error]="hasError('fullName','required') || hasError('fullName','minlength')">
+            <mat-icon class="input-icon">badge</mat-icon>
+            <input type="text" formControlName="fullName" placeholder="กรอกชื่อ-นามสกุล"
+              (focus)="focused['fullName']=true" (blur)="focused['fullName']=false" />
+          </div>
+          @if (hasError('fullName','required')) { <span class="field-error">กรุณากรอกชื่อ-นามสกุล</span> }
+          @if (hasError('fullName','minlength')) { <span class="field-error">ต้องมีอย่างน้อย 3 ตัวอักษร</span> }
+        </div>
+
+        <!-- Username -->
+        <div class="field-group">
+          <label>ชื่อผู้ใช้ <span class="required">*</span></label>
+          <div class="input-wrap" [class.focused]="focused['username']" [class.error]="hasError('username','required') || hasError('username','minlength') || hasError('username','pattern')">
+            <mat-icon class="input-icon">person_outline</mat-icon>
+            <input type="text" formControlName="username" placeholder="a-z, 0-9, . หรือ _"
+              autocomplete="username"
+              (focus)="focused['username']=true" (blur)="focused['username']=false" />
+          </div>
+          @if (hasError('username','required')) { <span class="field-error">กรุณากรอกชื่อผู้ใช้</span> }
+          @if (hasError('username','minlength')) { <span class="field-error">ต้องมีอย่างน้อย 4 ตัวอักษร</span> }
+          @if (hasError('username','pattern')) { <span class="field-error">ใช้ได้เฉพาะ a-z, 0-9, . และ _</span> }
+        </div>
+
+        <!-- Email + Phone row -->
+        <div class="row-two">
+          <div class="field-group">
+            <label>อีเมล</label>
+            <div class="input-wrap" [class.focused]="focused['email']" [class.error]="hasError('email','email')">
+              <mat-icon class="input-icon">mail_outline</mat-icon>
+              <input type="email" formControlName="email" placeholder="example@email.com"
+                autocomplete="email"
+                (focus)="focused['email']=true" (blur)="focused['email']=false" />
+            </div>
+            @if (hasError('email','email')) { <span class="field-error">รูปแบบอีเมลไม่ถูกต้อง</span> }
+          </div>
+
+          <div class="field-group">
+            <label>เบอร์โทร</label>
+            <div class="input-wrap" [class.focused]="focused['phone']">
+              <mat-icon class="input-icon">phone</mat-icon>
+              <input type="tel" formControlName="phone" placeholder="0xx-xxx-xxxx"
+                (focus)="focused['phone']=true" (blur)="focused['phone']=false" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Password -->
+        <div class="field-group">
+          <label>รหัสผ่าน <span class="required">*</span></label>
+          <div class="input-wrap" [class.focused]="focused['password']" [class.error]="hasError('password','required') || hasError('password','minlength')">
+            <mat-icon class="input-icon">lock_outline</mat-icon>
+            <input [type]="hidePassword() ? 'password' : 'text'" formControlName="password"
+              placeholder="อย่างน้อย 6 ตัวอักษร" autocomplete="new-password"
+              (focus)="focused['password']=true" (blur)="focused['password']=false" />
+            <button type="button" class="eye-btn" (click)="hidePassword.set(!hidePassword())">
+              <mat-icon>{{ hidePassword() ? 'visibility' : 'visibility_off' }}</mat-icon>
+            </button>
+          </div>
+          @if (hasError('password','required')) { <span class="field-error">กรุณากรอกรหัสผ่าน</span> }
+          @if (hasError('password','minlength')) { <span class="field-error">ต้องมีอย่างน้อย 6 ตัวอักษร</span> }
+        </div>
+
+        <!-- Confirm Password -->
+        <div class="field-group">
+          <label>ยืนยันรหัสผ่าน <span class="required">*</span></label>
+          <div class="input-wrap" [class.focused]="focused['confirmPassword']" [class.error]="hasError('confirmPassword','required') || mismatch">
+            <mat-icon class="input-icon">lock_reset</mat-icon>
+            <input [type]="hideConfirm() ? 'password' : 'text'" formControlName="confirmPassword"
+              placeholder="กรอกรหัสผ่านอีกครั้ง" autocomplete="new-password"
+              (focus)="focused['confirmPassword']=true" (blur)="focused['confirmPassword']=false" />
+            <button type="button" class="eye-btn" (click)="hideConfirm.set(!hideConfirm())">
+              <mat-icon>{{ hideConfirm() ? 'visibility' : 'visibility_off' }}</mat-icon>
+            </button>
+          </div>
+          @if (hasError('confirmPassword','required')) { <span class="field-error">กรุณายืนยันรหัสผ่าน</span> }
+          @if (mismatch) { <span class="field-error">รหัสผ่านไม่ตรงกัน</span> }
+        </div>
+
+        <!-- Submit -->
+        <button type="submit" class="reg-btn" [disabled]="loading()">
+          @if (loading()) {
+            <span class="spinner"></span>
+            <span>กำลังสมัครสมาชิก...</span>
+          } @else {
+            <mat-icon>person_add</mat-icon>
+            <span>สมัครสมาชิก</span>
+          }
+        </button>
+
+        <p class="login-link">มีบัญชีแล้ว? <a routerLink="/login">เข้าสู่ระบบ</a></p>
+      </form>
+      }
+    </div>
+  </div>
+</div>

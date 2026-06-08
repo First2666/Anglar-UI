@@ -1,0 +1,243 @@
+.bills-page {
+  padding: 32px;
+  background-color: var(--bg-main);
+  min-height: 100vh;
+}
+
+.bills-container {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 32px 0 20px;
+  
+  h2 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-main);
+  }
+}
+
+.section-divider {
+  height: 1px;
+  background: var(--border-color);
+  margin: 40px 0;
+}
+
+.bill-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 24px;
+}
+
+.bill-card {
+  border-radius: 20px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+  padding: 8px;
+
+  /* &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+  } */
+
+  &.pending {
+    border-top: 4px solid var(--accent);
+  }
+
+  &.paid {
+    border-top: 4px solid var(--success);
+    opacity: 0.85;
+    
+    .mat-card-content {
+       margin-bottom: 8px;
+    }
+  }
+
+  mat-card-title {
+    font-size: 16px;
+    font-weight: 700;
+  }
+
+  mat-card-subtitle {
+    color: var(--text-muted);
+    font-size: 13px;
+    margin-top: 2px;
+  }
+}
+
+.bill-avatar {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+
+  &.pending-avatar {
+    background: rgba(var(--accent-rgb), 0.1);
+    color: var(--accent);
+  }
+
+  &.paid-avatar {
+    background: rgba(var(--success-rgb), 0.1);
+    color: var(--success);
+  }
+}
+
+.bill-info {
+  margin: 16px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  .info-row {
+    display: flex;
+    gap: 8px;
+    font-size: 14px;
+    
+    .lbl { color: var(--text-muted); width: 80px; flex-shrink: 0; }
+    .val { color: var(--text-main); font-weight: 500; }
+  }
+}
+
+.bill-items-divider {
+  border-top: 1px border var(--border-color);
+  margin: 16px 0;
+}
+
+.bill-items {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 20px;
+
+  .item-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+
+    .item-name { color: var(--text-main); }
+    .item-price { font-weight: 600; color: var(--text-main); }
+  }
+}
+
+.bill-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  border-radius: 12px;
+
+  &.pending-total {
+    background: rgba(var(--accent-rgb), 0.05);
+    color: var(--accent);
+  }
+
+  &.paid-total {
+    background: rgba(var(--success-rgb), 0.05);
+    color: var(--success);
+  }
+
+  span:first-child:not(.total-amount) {
+    font-weight: 600;
+  }
+
+  .total-amount {
+    font-size: 20px;
+    font-weight: 700;
+  }
+}
+
+.bill-actions {
+  padding: 8px 16px 16px;
+  
+  .pay-btn {
+    border-radius: 12px;
+    padding: 0 24px;
+    font-size: 15px;
+    font-weight: 600;
+  }
+}
+
+.bill-summary-compact {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 16px;
+  
+  .compact-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 13px;
+    color: var(--text-muted);
+    
+    .lbl { color: var(--text-muted); }
+  }
+  
+  .paid-total {
+    flex-direction: column;
+    align-items: flex-end;
+    background: transparent;
+    padding: 0;
+    gap: 4px;
+    
+    .total-amount { font-size: 18px; color: var(--text-main); }
+    .status-badge {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--success);
+      background: rgba(var(--success-rgb), 0.1);
+      padding: 2px 8px;
+      border-radius: 10px;
+    }
+  }
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px;
+  text-align: center;
+  color: var(--text-muted);
+
+  .empty-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 32px;
+    background: var(--bg-card-elevated);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+    
+    mat-icon {
+      font-size: 32px;
+      width: 32px;
+      height: 32px;
+      color: var(--border-color);
+    }
+  }
+
+  h3 {
+    margin: 0 0 8px;
+    color: var(--text-main);
+    font-size: 18px;
+    font-weight: 600;
+  }
+
+  p {
+    margin: 0;
+    font-size: 15px;
+    max-width: 300px;
+  }
+}

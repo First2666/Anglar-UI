@@ -1,0 +1,176 @@
+<div class="mya-page">
+
+  <!-- PAGE HEADER -->
+  <div class="mya-hero">
+    <div class="hero-inner">
+      <div class="hero-badge">
+        <mat-icon>event_note</mat-icon>
+        ประวัตินัดหมาย
+      </div>
+      <h1>การนัดหมายของคุณ</h1>
+      <p>ติดตามสถานะการนัดหมายและประวัติทั้งหมด</p>
+    </div>
+    <div class="hero-action">
+      <button class="new-appt-btn" (click)="goToNewAppointment()">
+        <mat-icon>add</mat-icon>
+        <span>นัดหมายใหม่</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="mya-tabs">
+    <button class="tab-btn" [class.active]="activeTab() === 'pending'" (click)="switchTab('pending')">
+      <mat-icon>hourglass_empty</mat-icon>
+      รออนุมัติ
+      @if (pendingAppointments().length > 0) {
+        <span class="tab-badge">{{ pendingAppointments().length }}</span>
+      }
+    </button>
+    <button class="tab-btn" [class.active]="activeTab() === 'upcoming'" (click)="switchTab('upcoming')">
+      <mat-icon>event_available</mat-icon>
+      กำลังจะมาถึง
+      @if (upcomingAppointments().length > 0) {
+        <span class="tab-badge">{{ upcomingAppointments().length }}</span>
+      }
+    </button>
+    <button class="tab-btn" [class.active]="activeTab() === 'history'" (click)="switchTab('history')">
+      <mat-icon>history</mat-icon>
+      ประวัติ
+    </button>
+  </div>
+
+  <!-- SLIDER AREA -->
+  @if (activeList().length === 0) {
+
+    <!-- Empty State -->
+    <div class="empty-state">
+      @if (activeTab() === 'pending') { <mat-icon>hourglass_empty</mat-icon> }
+      @if (activeTab() === 'upcoming') { <mat-icon>event_busy</mat-icon> }
+      @if (activeTab() === 'history') { <mat-icon>history</mat-icon> }
+      <h3>
+        @if (activeTab() === 'pending') { ไม่มีนัดรออนุมัติ }
+        @if (activeTab() === 'upcoming') { ไม่มีนัดที่กำลังจะมาถึง }
+        @if (activeTab() === 'history') { ยังไม่มีประวัตินัดหมาย }
+      </h3>
+      <p>
+        @if (activeTab() === 'upcoming') { จองนัดหมายใหม่เพื่อเริ่มต้น }
+        @if (activeTab() === 'history') { ประวัติที่เสร็จสิ้นจะแสดงที่นี่ }
+      </p>
+      @if (activeTab() === 'upcoming') {
+        <button class="cta-btn-sm" (click)="goToNewAppointment()">
+          <mat-icon>add</mat-icon> จองนัดหมายใหม่
+        </button>
+      }
+    </div>
+
+  } @else {
+
+    <div class="appt-slider-wrap">
+      <!-- Slide counter -->
+      <div class="slide-counter">
+        <span>{{ activeSlide() + 1 }}</span> / <span>{{ activeList().length }}</span>
+      </div>
+
+      <!-- Horizontal slider -->
+      <div class="appt-list" #slider>
+
+        @for (a of activeList(); track a.id; let i = $index) {
+          <div class="appt-card" [style.animation-delay]="(i * 40) + 'ms'">
+
+            <!-- Status bar -->
+            <div class="card-status-bar" [class]="a.status.toLowerCase()"></div>
+
+            <!-- Header: Status + Datetime + Admin Action -->
+            <div class="card-header">
+              <div class="header-main-info">
+                <div class="status-pill" [class]="a.status.toLowerCase()">
+                  @if (a.status === 'Pending')   { <mat-icon>hourglass_empty</mat-icon> }
+                  @if (a.status === 'Scheduled') { <mat-icon>check_circle</mat-icon> }
+                  @if (a.status === 'CheckedIn') { <mat-icon>how_to_reg</mat-icon> }
+                  @if (a.status === 'InSession') { <mat-icon>local_hospital</mat-icon> }
+                  @if (a.status === 'Completed') { <mat-icon>task_alt</mat-icon> }
+                  @if (a.status === 'Cancelled') { <mat-icon>close</mat-icon> }
+                  {{ statusThai(a.status) }}
+                </div>
+                <div class="appt-datetime">
+                  <mat-icon>event</mat-icon>
+                  <span>{{ formatDate(a.startAt) }}</span>
+                  @if (a.status !== 'Completed' && a.status !== 'Cancelled') {
+                    <span class="time">{{ formatTime(a.startAt) }}</span>
+                  }
+                </div>
+              </div>
+
+              @if (isAdmin()) {
+                <button class="admin-delete-btn" (click)="deleteAppointment(a.id, $event)" matTooltip="ลบประวัตินัดหมาย" mat-icon-button>
+                  <mat-icon>delete_sweep</mat-icon>
+                </button>
+              }
+            </div>
+
+            <!-- Body -->
+            <div class="card-body">
+              <!-- Pet info -->
+              <div class="pet-row">
+                <div class="pet-avatar"><mat-icon>pets</mat-icon></div>
+                <div class="pet-info">
+                  <h3>{{ petName(a.petId) }}</h3>
+                  <span class="reason-tag">{{ a.reason }}</span>
+                  @if (a.reasonDetails) { <span class="reason-detail">{{ a.reasonDetails }}</span> }
+                </div>
+              </div>
+
+              <!-- Vet -->
+              <div class="vet-row">
+                <mat-icon>medical_services</mat-icon>
+                <span>{{ vetName(a.vetId) }}</span>
+              </div>
+
+              <!-- Bill (history only) -->
+              @if (a.status === 'Completed' && a.totalCost) {
+                <div class="billing-row">
+                  <div class="billing-summary">
+                    <span class="billing-label">ค่ารักษา</span>
+                    <span class="billing-amount">฿{{ a.totalCost | number }}</span>
+                    <span class="pay-status" [class]="a.paymentStatus === 'Paid' ? 'paid' : 'pending'">
+                      {{ a.paymentStatus === 'Paid' ? 'ชำระแล้ว' : 'ค้างชำระ' }}
+                    </span>
+                  </div>
+                  @if (a.paymentStatus !== 'Paid') {
+                    <button class="pay-now-btn" (click)="goToBills()">
+                      <mat-icon>payment</mat-icon> ชำระ
+                    </button>
+                  }
+                </div>
+              }
+            </div>
+
+            <!-- Footer actions -->
+            @if (a.status === 'Pending' || a.status === 'Scheduled') {
+              <div class="card-footer">
+                <div class="info-note" [class]="a.status === 'Pending' ? 'pending-note' : 'success-note'">
+                  <mat-icon>{{ a.status === 'Pending' ? 'schedule' : 'check_circle_outline' }}</mat-icon>
+                  <span>{{ a.status === 'Pending' ? 'รอการยืนยัน' : 'ยืนยันแล้ว — โปรดมาตรงเวลา' }}</span>
+                </div>
+                <button class="cancel-link" (click)="cancelAppointment(a.id)">
+                  <mat-icon>close</mat-icon> ยกเลิก
+                </button>
+              </div>
+            }
+
+          </div>
+        }
+      </div>
+
+      <!-- Dot indicators -->
+      <div class="slide-dots">
+        @for (a of activeList(); track a.id; let i = $index) {
+          <button class="dot" [class.active]="activeSlide() === i" (click)="scrollToSlide(i)"></button>
+        }
+      </div>
+    </div>
+
+  }
+
+</div>

@@ -1,0 +1,261 @@
+<div class="impeccable-page">
+  <!-- Top Header -->
+  <div class="page-header animate-fade-up">
+    <div class="header-titles">
+      <h1>
+        @if (isOwner()) {
+        สัตว์เลี้ยงของคุณ
+        } @else {
+        ทะเบียนสัตว์เลี้ยงทั้งหมด
+        }
+      </h1>
+      <p class="subtitle">จัดการข้อมูลส่วนตัวและประวัติทางการแพทย์ของเพื่อนตัวน้อย</p>
+    </div>
+    <div class="header-actions">
+      @if (canEdit()) {
+      <button mat-raised-button color="primary" class="rounded-btn" (click)="startCreate()">
+        <mat-icon>add</mat-icon>
+        <span>เพิ่มสัตว์เลี้ยง</span>
+      </button>
+      }
+    </div>
+  </div>
+
+  <!-- Form Area (acting like a 'Create Post' modal/drawer) -->
+  <ng-template #formDialog>
+    <div class="dialog-container">
+      <div class="form-header">
+        <h2 class="gradient-text">{{ editingId() ? 'แก้ไขข้อมูลสัตว์เลี้ยง' : 'สร้างโปรไฟล์ใหม่' }}</h2>
+        <button mat-icon-button class="close-btn" (click)="closeForm()"><mat-icon>close</mat-icon></button>
+      </div>
+      <div class="form-body">
+        <form class="bento-form" [formGroup]="form" (ngSubmit)="save()">
+          <div class="form-layout-split">
+            <!-- Left Column: Photo -->
+            <div class="photo-column">
+              <div class="photo-upload-container">
+                <label>รูปภาพสัตว์เลี้ยง</label>
+                <div class="upload-area" [class.has-photos]="form.value.photoUrls && form.value.photoUrls.length > 0">
+                  @if (form.value.photoUrls && form.value.photoUrls.length > 0) {
+                  <div class="photo-grid-preview">
+                    @for (url of form.value.photoUrls; track $index) {
+                    <div class="thumb-box" [matTooltip]="photoFileNames()[$index] || 'รูปภาพ'">
+                      <img [src]="url" alt="Pet preview" />
+                      <button type="button" mat-icon-button class="remove-photo-btn" (click)="removePhoto($index)">
+                        <mat-icon>close</mat-icon>
+                      </button>
+                    </div>
+                    }
+                    <div class="add-more-box" (click)="fileInput.click()">
+                      <mat-icon>add</mat-icon>
+                      <span>เพิ่มรูป</span>
+                    </div>
+                  </div>
+                  } @else {
+                  <div class="upload-placeholder" (click)="fileInput.click()">
+                    <mat-icon>add_a_photo</mat-icon>
+                    <span>คลิกเพื่ออัปโหลด</span>
+                  </div>
+                  }
+                  <input type="file" #fileInput accept="image/*" multiple style="display: none"
+                    (change)="onPhotoSelected($event)">
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Column: Fields -->
+            <div class="fields-column">
+              <div class="form-grid">
+                <mat-form-field appearance="outline" class="col-span-full">
+                  <mat-label>ชื่อสัตว์</mat-label>
+                  <input matInput formControlName="name" autocomplete="off" placeholder="เช่น มิโล ลูน่า" />
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                  <mat-label>ประเภทสัตว์</mat-label>
+                  <mat-select formControlName="species">
+                    @for (s of speciesOptions; track s) {
+                    <mat-option [value]="s">{{ speciesThai(s) }}</mat-option>
+                    }
+                  </mat-select>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                  <mat-label>สายพันธุ์</mat-label>
+                  <input matInput formControlName="breed" autocomplete="off" placeholder="เช่น ชิบะ ลาบราดอร์" />
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                  <mat-label>เพศ</mat-label>
+                  <mat-select formControlName="sex">
+                    <mat-option value="Male">ตัวผู้</mat-option>
+                    <mat-option value="Female">ตัวเมีย</mat-option>
+                    <mat-option value="Unknown">ไม่ระบุ</mat-option>
+                  </mat-select>
+                </mat-form-field>
+
+                <!-- <mat-form-field appearance="outline">
+                  <mat-label>ทำหมัน</mat-label>
+                  <mat-select formControlName="neutered">
+                    <mat-option [value]="true">ใช่ (ทำหมันแล้ว)</mat-option>
+                    <mat-option [value]="false">ยังไม่ทำ</mat-option>
+                  </mat-select>
+                </mat-form-field> -->
+
+                <mat-form-field appearance="outline">
+                  <mat-label>วันเกิด</mat-label>
+                  <input matInput [matDatepicker]="picker" formControlName="birthDate" (click)="picker.open()" />
+                  <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                  <mat-datepicker #picker></mat-datepicker>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                  <mat-label>หมายเลขไมโครชิป</mat-label>
+                  <input matInput formControlName="microchip" autocomplete="off" placeholder="เช่น 900164000..." />
+                </mat-form-field>
+
+                @if (!isOwner()) {
+                <mat-form-field appearance="outline" class="col-span-full">
+                  <mat-label>เจ้าของ</mat-label>
+                  <mat-select formControlName="ownerId">
+                    @for (o of owners(); track o.id) {
+                    <mat-option [value]="o.id">{{ o.fullName }}</mat-option>
+                    }
+                  </mat-select>
+                </mat-form-field>
+                }
+
+
+              </div>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button mat-button type="button" class="cancel-btn" (click)="closeForm()">ยกเลิก</button>
+            <button mat-raised-button class="rounded-btn btn-gradient" type="submit">บันทึกข้อมูล</button>
+          </div>
+        </form>
+      </div>
+
+      @if (editingId() && editingPetRecords().length > 0) {
+      <div class="history-panel glass-panel slide-down-form my-4">
+        <div class="panel-header">
+          <h3>ประวัติการรักษา ({{ editingPetRecords().length }} รายการ)</h3>
+        </div>
+        <div class="panel-body">
+          <div class="timeline">
+            @for (r of editingPetRecords(); track r.id) {
+            <div class="timeline-event">
+              <div class="event-date">{{ r.date }}</div>
+              <div class="event-content">
+                <div class="assessment"><span class="label">การวินิจฉัย:</span> {{ r.assessment }}</div>
+                <div class="plan"><span class="label">แผนการรักษา:</span> {{ r.plan }}</div>
+              </div>
+            </div>
+            }
+          </div>
+        </div>
+      </div>
+      }
+    </div>
+  </ng-template>
+
+  <!-- Filter & Search Bar -->
+  <div class="filter-toolbar">
+    <div class="search-box">
+      <mat-icon>search</mat-icon>
+      <input type="text" [value]="searchQuery()" (input)="searchQuery.set($any($event.target).value)"
+        placeholder="ค้นหาชื่อสัตว์เลี้ยง, สายพันธุ์..." />
+    </div>
+
+    <div class="filter-pills">
+      @for (sf of speciesFilterOptions; track sf) {
+      <button class="pill" [class.active]="speciesFilter() === sf" (click)="speciesFilter.set(sf)">
+        {{ sf === 'All' ? 'ทั้งหมด' : speciesThai(sf) }}
+      </button>
+      }
+    </div>
+  </div>
+
+  <!-- Pet Grid -->
+  <div class="pet-grid">
+    @for (p of filteredPets(); track p.id; let i = $index) {
+    <div class="pet-card animate-fade-up" [style.animation-delay]="(i * 0.05) + 's'">
+      @if (p.photoUrls && p.photoUrls.length > 0) {
+      <div class="card-cover" [style.background-image]="'url(' + p.photoUrls[gridPhotoIndices()[p.id] || 0] + ')'">
+        @if (p.photoUrls.length > 1) {
+        <div class="carousel-controls">
+          <button class="arrow-btn left" (click)="prevGridPhoto(p.id, p.photoUrls.length, $event)">
+            <mat-icon>chevron_left</mat-icon>
+          </button>
+          <div class="photo-counter">{{ (gridPhotoIndices()[p.id] || 0) + 1 }} / {{ p.photoUrls.length }}</div>
+          <button class="arrow-btn right" (click)="nextGridPhoto(p.id, p.photoUrls.length, $event)">
+            <mat-icon>chevron_right</mat-icon>
+          </button>
+        </div>
+        }
+      </div>
+      } @else {
+      <div [class]="'card-cover bg-' + p.species"></div>
+      }
+
+      <div class="card-avatar">
+        <mat-icon>{{ p.species | speciesIcon }}</mat-icon>
+      </div>
+
+      <div class="card-actions-top">
+        <button mat-icon-button [matMenuTriggerFor]="cardMenu" class="blur-btn">
+          <mat-icon>more_vert</mat-icon>
+        </button>
+        <mat-menu #cardMenu="matMenu">
+          <button mat-menu-item (click)="startEdit(p.id)"><mat-icon>edit</mat-icon> <span>แก้ไขโปรไฟล์</span></button>
+          <button mat-menu-item (click)="remove(p.id)" class="text-red"><mat-icon class="text-red">delete</mat-icon>
+            <span>ลบทิ้ง</span></button>
+        </mat-menu>
+      </div>
+
+      <div class="card-content">
+        <h3 class="pet-name">{{ p.name }}</h3>
+        <p class="pet-owner">{{ ownerName(p.ownerId) }}</p>
+
+        <div class="pet-traits">
+          <span class="trait species">{{ speciesThai(p.species) }}</span>
+          <span class="trait breed">{{ p.breed || 'ไม่ระบุพันธุ์' }}</span>
+          <span class="trait sex">{{ p.sex === 'Male' ? 'ตัวผู้' : p.sex === 'Female' ? 'ตัวเมีย' : 'ไม่ระบุ' }}</span>
+        </div>
+
+        <div class="pet-stats">
+          <div class="stat">
+            <span class="lbl">อายุ</span>
+            <span class="val">{{ age(p.birthDate) }}</span>
+          </div>
+          <div class="stat">
+            <span class="lbl">ทำหมัน</span>
+            <span class="val">{{ p.neutered ? 'แล้ว' : 'ยัง' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-footer">
+        <button class="action-btn"
+          (click)="handleAction('เปิดหน้าต่างข้อความ')"><mat-icon>chat_bubble_outline</mat-icon></button>
+        <button class="action-btn" (click)="handleAction('แชร์โปรไฟล์นี้')"><mat-icon>share</mat-icon></button>
+        <div class="spacer"></div>
+        <button class="primary-action" (click)="openPetDetails(p)">
+          <mat-icon>medical_information</mat-icon> ดูรายละเอียด
+        </button>
+      </div>
+    </div>
+    }
+
+    @if (filteredPets().length === 0) {
+    <div class="empty-state col-span-full">
+      <div class="empty-icon">
+        <mat-icon>pets</mat-icon>
+      </div>
+      <h3>ไม่พบข้อมูลสัตว์เลี้ยง</h3>
+      <p>ลองปรับคำค้นหา หรือเพิ่มสัตว์เลี้ยงตัวใหม่</p>
+    </div>
+    }
+  </div>
+</div>

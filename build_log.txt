@@ -1,0 +1,221 @@
+﻿[33mโฏ[39m Building...
+[32mโ”[39m Building...
+[1mInitial chunk files[22m[2m | [22m[1mNames[22m        [2m | [22m [1mRaw size[22m[2m | [22m[1mEstimated transfer size[22m
+[32mmain-4CJPWLOK.js[39m   [2m | [22m[2mmain[22m         [2m | [22m[36m940.71 kB[39m[2m | [22m              [36m189.27 kB[39m
+[32mstyles-3LOL6PQB.css[39m[2m | [22m[2mstyles[22m       [2m | [22m [36m30.49 kB[39m[2m | [22m                [36m3.67 kB[39m
+
+[1m [22m                  [2m | [22m[1mInitial total[22m[2m | [22m[1m[93m971.20 kB[39m[22m[2m | [22m              [1m192.94 kB[22m
+
+Application bundle generation complete. [6.954 seconds] - 2026-03-17T05:53:24.620Z
+
+node.exe : 
+[1m[33m[33mโ–ฒ [43;
+33m[[43;30mWARNING[43
+;33m][0m [1mNG8113: 
+NgClass is not used 
+within the template of 
+Calendar[0m 
+[1m[35m[plugin 
+angular-compiler][0m
+At line:1 char:1
++ & "C:\Program 
+Files\nodejs/node.exe" 
+"C:\Program 
+Files\nodejs/node_mo 
+...
++ ~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~
+~~
+    + CategoryInfo     
+         : 
+NotSpecified: ([1m[3 
+   3m[33mโ...r-compile
+r][    0m:String) [], 
+RemoteExc    eption
+    + 
+FullyQualifiedErrorId  
+   : NativeCommandError
+ 
+
+    src/app/pages/calen
+dar/calendar.ts:23:79:
+[37m      23 โ” 
+...odule, 
+MatButtonModule, 
+MatIconModule, 
+MatTooltipModule, 
+[32mNgClass[37m],
+         โ•ต           
+                       
+                       
+    [32m~~~~~~~[0m
+
+
+[33mโ–ฒ [43;33m[[43;
+30mWARNING[43;33m][0m
+ [1mNG8113: NgClass 
+is not used within the 
+template of Login[0m 
+[1m[35m[plugin 
+angular-compiler][0m
+
+    src/app/pages/login
+/login.ts:16:137:
+[37m      16 โ” 
+...ule, MatIconModule, 
+MatSnackBarModule, 
+[32mNgClass[37m, 
+MatTooltipModule],
+         โ•ต           
+                       
+         
+[32m~~~~~~~[0m
+
+
+[33mโ–ฒ [43;33m[[43;
+30mWARNING[43;33m][0m
+ [1mNG8113: NgClass 
+is not used within the 
+template of 
+MedicalRecordsPage[0m 
+[1m[35m[plugin 
+angular-compiler][0m
+
+    src/app/pages/medic
+al-records/medical-reco
+rds.ts:22:203:
+[37m      22 โ” 
+...ule, 
+MatSnackBarModule, 
+MatTooltipModule, 
+MatMenuModule, 
+[32mNgClass[37m],
+         โ•ต           
+                       
+                       
+    [32m~~~~~~~[0m
+
+
+[33mโ–ฒ [43;33m[[43;
+30mWARNING[43;33m][0m
+ [1mNG8113: NgClass 
+is not used within the 
+template of Owners[0m 
+[1m[35m[plugin 
+angular-compiler][0m
+
+    src/app/pages/owner
+s/owners.ts:16:169:
+[37m      16 โ” 
+...le, MatTableModule, 
+MatSnackBarModule, 
+MatTooltipModule, 
+[32mNgClass[37m],
+         โ•ต           
+                       
+                       
+    [32m~~~~~~~[0m
+
+
+[33mโ–ฒ [43;33m[[43;
+30mWARNING[43;33m][0m
+ [1mNG8113: 
+LowerCasePipe is not 
+used within the 
+template of Pets[0m 
+[1m[35m[plugin 
+angular-compiler][0m
+
+    src/app/pages/pets/
+pets.ts:23:42:
+[37m      23 โ” 
+...iveFormsModule, 
+NgClass, [32mLowerCase
+Pipe[37m, SlicePipe, 
+MatMenuModul...
+         โ•ต           
+                  
+[32m~~~~~~~~~~~~~[0m
+
+
+[33mโ–ฒ [43;33m[[43;
+30mWARNING[43;33m][0m
+ [1mNG8113: SlicePipe 
+is not used within the 
+template of Pets[0m 
+[1m[35m[plugin 
+angular-compiler][0m
+
+    src/app/pages/pets/
+pets.ts:23:57:
+[37m      23 โ” 
+...e, NgClass, 
+LowerCasePipe, 
+[32mSlicePipe[37m, 
+MatMenuModule, 
+MatCardMod...
+         โ•ต           
+                    
+[32m~~~~~~~~~[0m
+
+
+[33mโ–ฒ [43;33m[[43;
+30mWARNING[43;33m][0m
+ [1mNG8113: NgClass 
+is not used within the 
+template of Vets[0m 
+[1m[35m[plugin 
+angular-compiler][0m
+
+    src/app/pages/vets/
+vets.ts:20:226:
+[37m      20 โ” ... 
+MatChipsModule, 
+MatSlideToggleModule, 
+MatTooltipModule, 
+[32mNgClass[37m],
+         โ•ต           
+                       
+                       
+    [32m~~~~~~~[0m
+
+
+[33mโ–ฒ [43;33m[[43;
+30mWARNING[43;33m][0m
+ [1mDeprecation[0m 
+[1m[35m[plugin 
+angular-sass][0m
+
+    src/app/pages/vets/
+vets.scss:3:8:
+[37m      3 โ” 
+@import [32m[37m'../o
+wners/owners.scss';
+        โ•ต         
+[32m^[0m
+
+
+  Sass @import rules 
+are deprecated and 
+will be removed in 
+Dart Sass 3.0.0.
+  
+  More info and 
+automated migrator: [4
+mhttps://sass-lang.com/
+d/import[0m
+
+
+[33mโ–ฒ [43;33m[[43;
+30mWARNING[43;33m][0m
+ [1mbundle initial 
+exceeded maximum 
+budget. Budget 500.00 
+kB was not met by 
+471.20 kB with a total 
+of 971.20 kB.[0m
+
+[39m[22m
+Output location: C:\ag\pet-clinic\dist\pet-clinic
+

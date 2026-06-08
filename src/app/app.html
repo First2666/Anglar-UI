@@ -1,0 +1,346 @@
+@if (isLoggedIn()) {
+@if (!useNavbarLayout()) {
+<div class="app-shell">
+  <!-- ========== SIDEBAR (Admin / Receptionist) ========== -->
+  <nav class="sidebar">
+    <!-- Clinic Brand -->
+    <div class="sidebar-brand">
+      <a class="brand-link" routerLink="/dashboard" matTooltip="VetCare Pro">
+        <div class="brand-icon-sm">
+          <mat-icon>local_hospital</mat-icon>
+        </div>
+        <span class="brand-label">VetCare Pro</span>
+      </a>
+    </div>
+
+    <div class="nav-divider"></div>
+
+    <!-- Nav Links -->
+    <div class="nav-section">
+      <a class="nav-link" routerLink="/dashboard" routerLinkActive="active" matTooltip="แดชบอร์ด"
+        matTooltipPosition="right">
+        <mat-icon>dashboard</mat-icon>
+        <span class="nav-label">หน้าแรก</span>
+      </a>
+      <a class="nav-link" routerLink="/appointments" routerLinkActive="active" matTooltip="นัดหมาย"
+        matTooltipPosition="right">
+        <mat-icon>event_available</mat-icon>
+        <span class="nav-label">นัดหมาย</span>
+      </a>
+      <!-- @if (hasRole('admin', 'vet')) {
+            <a class="nav-link" routerLink="/calendar" routerLinkActive="active" matTooltip="ตารางแพทย์" matTooltipPosition="right">
+              <mat-icon>calendar_month</mat-icon>
+              <span class="nav-label">ตารางแพทย์</span>
+            </a>
+          } -->
+      <a class="nav-link" routerLink="/pets" routerLinkActive="active" matTooltip="สัตว์เลี้ยง"
+        matTooltipPosition="right">
+        <mat-icon>pets</mat-icon>
+        <span class="nav-label">สัตว์เลี้ยง</span>
+      </a>
+      @if (hasRole('admin', 'vet')) {
+      <a class="nav-link" routerLink="/medical-records" routerLinkActive="active" matTooltip="บันทึกการรักษา (Staff)"
+        matTooltipPosition="right">
+        <mat-icon>description</mat-icon>
+        <span class="nav-label">บันทึกการรักษา</span>
+      </a>
+      }
+      <a class="nav-link" routerLink="/my-appointments" routerLinkActive="active" matTooltip="ประวัติการนัดหมาย"
+        matTooltipPosition="right">
+        <mat-icon>event_note</mat-icon>
+        <span class="nav-label">ประวัติการนัด</span>
+      </a>
+      <a class="nav-link" routerLink="/my-treatment-history" routerLinkActive="active" matTooltip="ประวัติการรักษา"
+        matTooltipPosition="right">
+        <mat-icon>medication</mat-icon>
+        <span class="nav-label">ประวัติการรักษา</span>
+      </a>
+      @if (hasRole('admin')) {
+      <a class="nav-link" routerLink="/vets" routerLinkActive="active" matTooltip="บุคลากรทางการแพทย์"
+        matTooltipPosition="right">
+        <mat-icon>badge</mat-icon>
+        <span class="nav-label">บุคลากร</span>
+      </a>
+      <a class="nav-link" routerLink="/users" routerLinkActive="active" matTooltip="จัดการผู้ใช้"
+        matTooltipPosition="right">
+        <mat-icon>manage_accounts</mat-icon>
+        <span class="nav-label">ผู้ใช้งาน</span>
+      </a>
+      }
+      <a class="nav-link" routerLink="/reports" routerLinkActive="active" matTooltip="รายงาน"
+        matTooltipPosition="right">
+        <mat-icon>bar_chart</mat-icon>
+        <span class="nav-label">รายงาน</span>
+      </a>
+
+      <div class="nav-divider" style="margin: 6px 0"></div>
+
+      <a class="nav-link" routerLink="/boarding" routerLinkActive="active" matTooltip="ฝากเลี้ยง"
+        matTooltipPosition="right">
+        <mat-icon>hotel</mat-icon>
+        <span class="nav-label">ฝากเลี้ยง</span>
+      </a>
+      <a class="nav-link shop-link" routerLink="/shop" routerLinkActive="active" matTooltip="ร้านค้าสัตว์เลี้ยง"
+        matTooltipPosition="right">
+        <mat-icon>storefront</mat-icon>
+        <span class="nav-label">ร้านค้า</span>
+      </a>
+      <a class="nav-link" routerLink="/bills" routerLinkActive="active" matTooltip="ค่าใช้จ่าย"
+        matTooltipPosition="right">
+        <mat-icon>receipt_long</mat-icon>
+        <span class="nav-label">ค่าใช้จ่าย</span>
+      </a>
+      <a class="nav-link" routerLink="/shop/orders" routerLinkActive="active" matTooltip="ประวัติการสั่งซื้อ"
+        matTooltipPosition="right">
+        <mat-icon>receipt_long</mat-icon>
+        <span class="nav-label">คำสั่งซื้อ</span>
+      </a>
+    </div>
+
+    <div class="nav-divider bottom-divider"></div>
+
+    <!-- Bottom Nav -->
+    <div class="sidebar-bottom">
+      <button class="nav-link nav-btn" (click)="toggleDark()" matTooltip="สลับการแสดงผล" matTooltipPosition="right">
+        <mat-icon>{{ darkMode() ? 'light_mode' : 'dark_mode' }}</mat-icon>
+        <span class="nav-label">{{ darkMode() ? 'โหมดสว่าง' : 'โหมดมืด' }}</span>
+      </button>
+      <button class="nav-link nav-btn logout-btn" (click)="logout()" matTooltip="ออกจากระบบ" matTooltipPosition="right">
+        <mat-icon>power_settings_new</mat-icon>
+        <span class="nav-label">ออกจากระบบ</span>
+      </button>
+    </div>
+  </nav>
+
+  <div class="app-main">
+    <!-- Mobile Top Bar (Sidebar Layout only) -->
+    <header class="mobile-topbar">
+      <div class="mobile-brand">
+        <div class="brand-icon-sm"><mat-icon>local_hospital</mat-icon></div>
+        <span>VetCare Pro</span>
+      </div>
+      <div class="mobile-actions">
+        <button class="topbar-btn" [matMenuTriggerFor]="mobileMenu">
+          <mat-icon>menu</mat-icon>
+        </button>
+      </div>
+    </header>
+
+    <main class="content-area" [@routeAnimations]="getRouteAnimationData(outlet)">
+      <router-outlet #outlet="outlet" />
+    </main>
+
+    <!-- Mobile Bottom Nav (Sidebar Layout only) -->
+    <nav class="mobile-bottom-nav">
+      <a class="mob-nav-item" routerLink="/dashboard" routerLinkActive="active">
+        <mat-icon>dashboard</mat-icon><span>หน้าแรก</span>
+      </a>
+      <a class="mob-nav-item" routerLink="/appointments" routerLinkActive="active">
+        <mat-icon>event_available</mat-icon><span>นัดหมาย</span>
+      </a>
+      <a class="mob-nav-item" routerLink="/pets" routerLinkActive="active">
+        <mat-icon>pets</mat-icon><span>สัตว์เลี้ยง</span>
+      </a>
+      <a class="mob-nav-item" routerLink="/shop" routerLinkActive="active">
+        <mat-icon>storefront</mat-icon><span>ร้านค้า</span>
+      </a>
+      <a class="mob-nav-item" routerLink="/profile" routerLinkActive="active">
+        <mat-icon>person</mat-icon><span>โปรไฟล์</span>
+      </a>
+    </nav>
+  </div>
+</div>
+} @else {
+<!-- ========== TOP NAVBAR (Owner / Vet) ========== -->
+<div class="nav-shell">
+  <header class="navbar">
+    <div class="navbar-left">
+      <a class="brand-link" routerLink="/dashboard">
+        <div class="brand-icon-sm"><mat-icon>local_hospital</mat-icon></div>
+        <span class="brand-label">VetCare Pro</span>
+      </a>
+      <!-- Mobile Menu Trigger for Navbar layout -->
+      <button class="topbar-btn mobile-only" [matMenuTriggerFor]="mobileMenu" style="margin-left: 12px; display: none;">
+        <mat-icon>menu</mat-icon>
+      </button>
+    </div>
+
+    <nav class="navbar-center">
+      <a class="nav-item" routerLink="/dashboard" routerLinkActive="active">หน้าแรก</a>
+      <a class="nav-item" routerLink="/appointments" routerLinkActive="active">นัดหมาย</a>
+      @if (userRole() === 'owner') {
+      <a class="nav-item" routerLink="/my-appointments" routerLinkActive="active">ประวัตินัดหมาย</a>
+      <a class="nav-item" routerLink="/my-treatment-history" routerLinkActive="active">ประวัติการรักษา</a>
+      <a class="nav-item" routerLink="/pets" routerLinkActive="active">สัตว์เลี้ยง</a>
+      <a class="nav-item" routerLink="/bills" routerLinkActive="active">ค่าใช้จ่าย</a>
+      <a class="nav-item" routerLink="/boarding" routerLinkActive="active">ฝากเลี้ยง</a>
+      }
+      @if (userRole() === 'vet') {
+      <!-- <a class="nav-item" routerLink="/calendar" routerLinkActive="active">ตารางแพทย์</a> -->
+      <a class="nav-item" routerLink="/medical-records" routerLinkActive="active">รักษา</a>
+      }
+      <a class="nav-item" routerLink="/shop" routerLinkActive="active">ร้านค้า</a>
+    </nav>
+
+    <div class="navbar-right">
+      @if (userRole() === 'vet') {
+      <button class="availability-pill" [class.available]="isVetAvailable()" [class.busy]="!isVetAvailable()" (click)="toggleVetAvailability()" [matTooltip]="isVetAvailable() ? 'คลิกเพื่อเปลี่ยนเป็นสถานะ: ติดคิว/ไม่ว่าง' : 'คลิกเพื่อเปลี่ยนเป็นสถานะ: พร้อมรับคิว'">
+        <div class="status-indicator"></div>
+        <span>{{ isVetAvailable() ? 'พร้อมรับคิว' : 'ติดคิว (ไม่ว่าง)' }}</span>
+      </button>
+      }
+      <button class="icon-btn" (click)="toggleDark()" matTooltip="สลับการแสดงผล">
+        <mat-icon>{{ darkMode() ? 'light_mode' : 'dark_mode' }}</mat-icon>
+      </button>
+      <div class="user-greeting">
+        <span class="name">{{ userFullName() }}</span>
+        <span class="role">{{ currentRole() }}</span>
+      </div>
+      <button class="logout-pill" (click)="logout()">
+        <mat-icon>power_settings_new</mat-icon>
+        <span>ออกจากระบบ</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="nav-content" [@routeAnimations]="getRouteAnimationData(outlet)">
+    <router-outlet #outlet="outlet" />
+  </main>
+</div>
+}
+
+<!-- Mobile Menu Definitions (Shared) -->
+<mat-menu #mobileMenu="matMenu">
+  <button mat-menu-item routerLink="/dashboard"><mat-icon>dashboard</mat-icon>หน้าหลัก</button>
+  <button mat-menu-item routerLink="/appointments"><mat-icon>event_available</mat-icon>นัดหมาย</button>
+  
+  @if (hasRole('owner')) {
+  <button mat-menu-item routerLink="/my-appointments"><mat-icon>event_note</mat-icon>ประวัตินัดหมาย</button>
+  <button mat-menu-item routerLink="/my-treatment-history"><mat-icon>medication</mat-icon>ประวัติการรักษา</button>
+  }
+  
+  @if (hasRole('vet', 'admin')) {
+  <button mat-menu-item routerLink="/medical-records"><mat-icon>description</mat-icon>บันทึกการรักษา</button>
+  }
+  
+  @if (hasRole('owner', 'admin')) {
+  <button mat-menu-item routerLink="/pets"><mat-icon>pets</mat-icon>สัตว์เลี้ยง</button>
+  <button mat-menu-item routerLink="/bills"><mat-icon>receipt_long</mat-icon>ค่าใช้จ่าย</button>
+  <button mat-menu-item routerLink="/boarding"><mat-icon>hotel</mat-icon>ฝากเลี้ยง</button>
+  }
+
+  <button mat-menu-item routerLink="/shop"><mat-icon>storefront</mat-icon>ร้านค้า</button>
+  
+  @if (hasRole('admin')) {
+  <button mat-menu-item routerLink="/shop/orders"><mat-icon>receipt_long</mat-icon>ประวัติการสั่งซื้อ</button>
+  }
+  <mat-divider></mat-divider>
+  <button mat-menu-item (click)="toggleDark()">
+    <mat-icon>{{ darkMode() ? 'light_mode' : 'dark_mode' }}</mat-icon>
+    {{ darkMode() ? 'โหมดสว่าง' : 'โหมดมืด' }}
+  </button>
+  <button mat-menu-item (click)="logout()" style="color: #ef4444;">
+    <mat-icon style="color: #ef4444;">logout</mat-icon>ออกจากระบบ
+  </button>
+</mat-menu>
+} @else {
+<div [@routeAnimations]="getRouteAnimationData(outlet)">
+  <router-outlet #outlet="outlet" />
+</div>
+}
+
+<!-- Shared Billing Notification Dialog (For Owners) -->
+<ng-template #billDialog>
+  <div class="bill-confirm-dialog">
+    <!-- Header -->
+    <div class="bcd-header">
+      <div class="bcd-icon">
+        <mat-icon>receipt_long</mat-icon>
+      </div>
+      <div>
+        <h2>ใบแจ้งหนี้ค่ารักษาใหม่</h2>
+        <p>สัตว์เลี้ยงของคุณได้รับการรักษาเสร็จสิ้นแล้ว</p>
+      </div>
+    </div>
+
+    <!-- Patient Info -->
+    <div class="bcd-patient">
+      <div class="bcp-item">
+        <span class="bcp-label">สัตว์เลี้ยง</span>
+        <span class="bcp-value">{{ petName(pendingBill()?.petId || '') }}</span>
+      </div>
+      <div class="bcp-item">
+        <span class="bcp-label">แพทย์ผู้รักษา</span>
+        <span class="bcp-value">{{ vetName(pendingBill()?.vetId || '') }}</span>
+      </div>
+    </div>
+
+    <!-- Bill Items -->
+    <div class="bcd-items">
+      <div class="bcd-items-header">
+        <span>รายการ</span>
+        <span>ราคา</span>
+      </div>
+      @for (row of pendingBill()?.billItems; track row.id) {
+        <div class="bcd-item-row">
+          <span class="bcd-item-name">{{ row.name }}</span>
+          <span class="bcd-item-price">฿{{ row.price | number }}</span>
+        </div>
+      }
+      <div class="bcd-total-bar">
+        <span class="bcd-total-label">ยอดชำระสุทธิ</span>
+        <span class="bcd-total-amount">฿{{ pendingBill()?.totalCost | number }}</span>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="bcd-actions">
+      <button class="bcd-btn-defer" type="button" (click)="deferPendingBill()">
+        <mat-icon>schedule</mat-icon>
+        ชำระภายหลัง
+      </button>
+      <button class="bcd-btn-pay" type="button" (click)="payPendingBill()">
+        <mat-icon>payments</mat-icon>
+        ชำระเงินทันที ฿{{ pendingBill()?.totalCost | number }}
+      </button>
+    </div>
+  </div>
+</ng-template>
+
+<!-- Logout Confirmation Modal (Bootstrap) -->
+<!-- Global Toast Notifications -->
+<app-toast-container />
+
+@if (showLogoutConfirm()) {
+<div class="modal fade show d-block" tabindex="-1"
+  style="background: rgba(0,0,0,0.85); z-index: 99999; backdrop-filter: blur(12px); position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;">
+  <div class="modal-dialog modal-dialog-centered w-100" style="max-width: 500px;">
+    <div class="modal-content overflow-hidden border-0"
+      style="background: var(--card-bg); color: var(--text-main); border-radius: 32px; box-shadow: 0 32px 64px rgba(0,0,0,0.5);">
+      <div class="modal-header border-0 pb-0 justify-content-center pt-5">
+        <h2 class="modal-title fs-2 fw-bold" style="letter-spacing: -0.02em;">ออกจากระบบ?</h2>
+      </div>
+      <div class="modal-body py-4 px-4 text-center">
+        <div class="mb-4 d-inline-flex align-items-center justify-content-center"
+          style="width: 90px; height: 90px; background: rgba(150, 150, 150, 0.1); border-radius: 50%;">
+          <mat-icon
+            style="font-size: 48px; width: 48px; height: 48px; color: var(--text-main);">power_settings_new</mat-icon>
+        </div>
+        <p class="fs-5 opacity-75 px-3">คุณแน่ใจหรือไม่ว่าต้องการออกจากระบบในขณะนี้? ข้อมูลที่ยังไม่บันทึกอาจสูญหาย</p>
+      </div>
+      <div class="modal-footer border-0 p-5 gap-3 justify-content-center">
+        <button type="button" class="btn btn-outline-dark btn-lg rounded-pill px-5 border-2 text-uppercase fw-bold"
+          style="font-size: 0.9rem; letter-spacing: 0.1em; color: var(--text-main); border-color: var(--border-color);"
+          (click)="cancelLogout()">
+          ยกเลิก
+        </button>
+        <button type="button" class="btn btn-lg rounded-pill px-5 fw-bold text-uppercase"
+          style="background: var(--text-main); color: var(--app-bg); font-size: 0.9rem; letter-spacing: 0.1em; box-shadow: var(--shadow-md);"
+          (click)="confirmLogout()">
+          ออกจากระบบ
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+}

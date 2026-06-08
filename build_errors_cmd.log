@@ -1,0 +1,61 @@
+
+> pet-clinic@0.0.0 build
+> ng build
+
+[33m❯[39m Building...
+[32m✔[39m Building...
+Application bundle generation failed. [2.597 seconds] - 2026-03-17T14:02:38.409Z
+
+[1m[33m[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: SlicePipe is not used within the template of App[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/app.ts:29:4:
+[37m      29 │     [32mSlicePipe[37m,
+         ╵     [32m~~~~~~~~~[0m
+
+[39m[22m
+[1m[31m[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'closeForm' does not exist on type 'MedicalRecordsPage'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/medical-records/medical-records.html:34:51:
+[37m      34 │ ..."sheet-close-btn" (click)="[32mcloseForm[37m()"><mat-icon>close</mat-ic...
+         ╵                               [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component MedicalRecordsPage.
+
+    src/app/pages/medical-records/medical-records.ts:27:17:
+[37m      27 │     templateUrl: [32m'./medical-records.html'[37m,
+         ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'closeForm' does not exist on type 'MedicalRecordsPage'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/medical-records/medical-records.html:143:61:
+[37m      143 │ ...   <button type="button" class="btn-ghost" (click)="[32mcloseForm[37m()">
+          ╵                                                        [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component MedicalRecordsPage.
+
+    src/app/pages/medical-records/medical-records.ts:27:17:
+[37m      27 │     templateUrl: [32m'./medical-records.html'[37m,
+         ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'closeForm' does not exist on type 'MedicalRecordsPage'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/medical-records/medical-records.ts:193:13:
+[37m      193 │         this.[32mcloseForm[37m(); // Hide form after saving
+          ╵              [32m~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG5002: Unexpected closing tag "ng-template". It may happen when the tag has already been closed by another tag. For more info see https://www.w3.org/TR/html5/syntax.html#closing-elements-that-have-implied-end-tags[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/pets/pets.html:154:2:
+[37m      154 │   [32m</ng-template>[37m
+          ╵   [32m~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component Pets.
+
+    src/app/pages/pets/pets.ts:27:15:
+[37m      27 │   templateUrl: [32m'./pets.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~[0m
+
+[39m[22m

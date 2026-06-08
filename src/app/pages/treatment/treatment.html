@@ -1,0 +1,159 @@
+<div class="treatment-page">
+  <!-- === HEADER PATIENT BANNER === -->
+  <header class="patient-banner shadow-sm">
+    <div class="banner-content">
+      <div class="patient-profile">
+        <div class="pet-avatar">
+          <mat-icon>{{ pet()?.species === 'Dog' ? 'pets' : pet()?.species === 'Cat' ? 'pets' : 'cruelty_free' }}</mat-icon>
+        </div>
+        <div class="pet-info">
+          <h1>{{ pet()?.name || 'Loading...' }} <span class="tag-species">{{ pet()?.species }}</span></h1>
+          <p class="pet-meta">
+            {{ pet()?.breed }} • {{ pet()?.sex }} • {{ calculateAge(pet()?.birthDate) }}
+          </p>
+        </div>
+      </div>
+      <div class="owner-info">
+        <div class="owner-icon"><mat-icon>person</mat-icon></div>
+        <div>
+          <span class="lbl-owner">เจ้าของ</span>
+          <span class="val-owner">{{ owner()?.fullName }}</span>
+        </div>
+      </div>
+      <div class="banner-actions">
+        <button mat-button class="btn-cancel" (click)="router.navigate(['/appointments'])">
+          <mat-icon>close</mat-icon> ยกเลิกเซสชั่น
+        </button>
+        <button mat-raised-button color="primary" class="btn-complete-treatment" (click)="save()">
+          <mat-icon>check_circle</mat-icon> เสร็จสิ้นการรักษาและส่งใบแจ้งหนี้
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- === MAIN WORKSTATION === -->
+  <main class="workstation-container">
+    
+    <!-- LEFT: MEDICAL HISTORY & CONTEXT -->
+    <aside class="workstation-sidebar">
+      <section class="history-section card-box">
+        <div class="section-title">
+          <mat-icon>history</mat-icon> <h3>ประวัติการรักษาที่ผ่านมา</h3>
+        </div>
+        <div class="history-list">
+          @for (rec of history(); track rec.id) {
+            <div class="history-item">
+              <div class="hi-date">
+                <span class="hi-day">{{ rec.date | slice:8:10 }}</span>
+                <span class="hi-mon">{{ rec.date | slice:5:7 }}/{{ rec.date | slice:0:4 }}</span>
+              </div>
+              <div class="hi-content">
+                <h4>{{ rec.assessment }}</h4>
+                <p>{{ rec.plan }}</p>
+                @if (rec.weight) { <small>นน้ำหนัก: {{ rec.weight }} กก.</small> }
+              </div>
+            </div>
+          }
+          @if (history().length === 0) {
+            <div class="empty-history">
+              <mat-icon>history_toggle_off</mat-icon>
+              <p>ไม่มีประวัติการรักษาเดิม</p>
+            </div>
+          }
+        </div>
+      </section>
+      
+      <!-- PET NOTES -->
+      <section class="notes-section card-box">
+        <div class="section-title">
+          <mat-icon>sticky_note_2</mat-icon> <h3>บันทึกสำคัญจากระบบ</h3>
+        </div>
+        <p class="pet-notes-msg">{{ pet()?.notes || 'ไม่มีหมายเหตุเพิ่มเติม' }}</p>
+      </section>
+    </aside>
+
+    <!-- RIGHT: ACTIVE TREATMENT FORM -->
+    <article class="workstation-main">
+      <form [formGroup]="form" (ngSubmit)="save()" class="session-form">
+        
+        <!-- VITALS BAR -->
+        <div class="vitals-bar-card card-box shadow-sm">
+          <div class="section-title">
+            <mat-icon>monitor_heart</mat-icon> <h3>สัญญาณชีพวันนี้ (Vitals)</h3>
+          </div>
+          <div class="vitals-grid">
+            <mat-form-field appearance="outline">
+              <mat-label>น้ำหนัก (กก.)</mat-label>
+              <input matInput type="number" formControlName="weight" placeholder="12.0" />
+              <mat-icon matSuffix>scale</mat-icon>
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>อุณหภูมิ (°C)</mat-label>
+              <input matInput type="number" formControlName="temperature" placeholder="38.5" />
+              <mat-icon matSuffix>thermostat</mat-icon>
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>ชีพจร (HR/min)</mat-label>
+              <input matInput type="number" formControlName="heartRate" placeholder="110" />
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>หายใจ (RR/min)</mat-label>
+              <input matInput type="number" formControlName="respiratoryRate" placeholder="24" />
+            </mat-form-field>
+          </div>
+        </div>
+
+        <!-- SOAP EDITOR -->
+        <div class="soap-editor-card card-box shadow-sm">
+          <div class="section-title"><mat-icon>subject</mat-icon> <h3>บันทึกผลการตรวจวินิจฉัย (SOAP)</h3></div>
+          <div class="soap-grid">
+            <div class="soap-field">
+              <label><span class="soap-initial">S</span> Subjective (อาการที่พบ)</label>
+              <textarea formControlName="subjective" placeholder="อาการจากการสังเกตของเจ้าของ..."></textarea>
+            </div>
+            <div class="soap-field">
+              <label><span class="soap-initial">O</span> Objective (ผลตรวจร่างกาย)</label>
+              <textarea formControlName="objective" placeholder="ผลการคลำตรวจ ปอด หัวใจ..."></textarea>
+            </div>
+            <div class="soap-field assessment-field">
+              <label><span class="soap-initial">A</span> Assessment (สรุปการวินิจฉัย)</label>
+              <input type="text" formControlName="assessment" placeholder="ระบุโรคหรือการวินิจฉัยหลัก..." />
+            </div>
+            <div class="soap-field plan-field">
+              <label><span class="soap-initial">P</span> Plan (แผนการรักษาและยาสั่งจ่าย)</label>
+              <textarea formControlName="plan" placeholder="ขั้นตอนการรักษา, ยาที่ต้องทาน, นัดติดตามอาการ..."></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- BILLING SECTION -->
+        <div class="billing-card card-box shadow-sm">
+          <div class="section-title"><mat-icon>payments</mat-icon> <h3>ค่าใช้จ่ายการรักษา</h3></div>
+          <div class="billing-table">
+            <div class="bt-header">
+              <span class="bt-col-name">รายการบริการ/ยา</span>
+              <span class="bt-col-price">ราคา (฿)</span>
+              <span class="bt-col-action"></span>
+            </div>
+            @for (row of billRows(); track row.id) {
+              <div class="bt-row">
+                <input type="text" [value]="row.name" (input)="updateBillRowName(row.id, $any($event.target).value)" placeholder="เช่น ยาฆ่าเชื้อ, ค่าตรวจพิเศศ..." class="bt-input-name" />
+                <input type="number" [value]="row.price" (input)="updateBillRowPrice(row.id, $any($event.target).value)" class="bt-input-price" />
+                <button type="button" class="btn-remove-row" (click)="removeBillRow(row.id)"><mat-icon>close</mat-icon></button>
+              </div>
+            }
+            <button type="button" class="btn-add-row" (click)="addBillRow()">
+              <mat-icon>add</mat-icon> เพิ่มรายการค่าบริการ
+            </button>
+            <div class="bt-total-footer">
+              <span class="total-lbl">ยอดรวมค่ารักษาเบื้องต้น:</span>
+              <span class="total-val">฿{{ billTotal() | number }}</span>
+            </div>
+          </div>
+        </div>
+
+      </form>
+    </article>
+
+  </main>
+</div>

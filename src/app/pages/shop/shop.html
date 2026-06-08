@@ -1,0 +1,323 @@
+<div class="shop-page">
+
+  <!-- ── Header ── -->
+  <div class="shop-header animate-fade-up">
+    <div class="shop-title-row">
+      <div class="shop-title-group">
+        <div class="header-icon-wrap">
+          <mat-icon>storefront</mat-icon>
+        </div>
+        <div>
+          <h1 class="shop-title">ร้านขายของสัตว์เลี้ยง</h1>
+          <p class="shop-sub">อาหาร อุปกรณ์ และสินค้าคุณภาพ</p>
+        </div>
+      </div>
+      <div class="shop-actions">
+        @if (isAdmin()) {
+          <button mat-flat-button color="primary" class="admin-add-btn" (click)="addProduct()">
+            <mat-icon>add</mat-icon>
+            เพิ่มสินค้า
+          </button>
+        }
+        <button class="cart-fab" (click)="goToCart()" matTooltip="ตะกร้าสินค้า">
+          <mat-icon [matBadge]="cartCount() > 0 ? cartCount() : null" matBadgeColor="warn">
+            shopping_cart
+          </mat-icon>
+          <span class="cart-count-label">{{ cartCount() > 0 ? cartCount() : '' }}</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Search + Sort -->
+    <div class="toolbar-row">
+      <div class="search-box">
+        <mat-icon class="search-icon">search</mat-icon>
+        <input
+          class="search-input"
+          type="text"
+          placeholder="ค้นหาสินค้า ชื่อ แบรนด์..."
+          [ngModel]="searchTerm()"
+          (ngModelChange)="searchTerm.set($event)"
+        />
+        @if (searchTerm()) {
+          <button class="clear-search" (click)="searchTerm.set('')">
+            <mat-icon>close</mat-icon>
+          </button>
+        }
+      </div>
+      <select class="sort-select" [ngModel]="sortBy()" (ngModelChange)="sortBy.set($event)">
+        <option value="default">เรียงลำดับ</option>
+        <option value="price-asc">ราคา ↑</option>
+        <option value="price-desc">ราคา ↓</option>
+        <option value="rating">คะแนนสูงสุด</option>
+      </select>
+    </div>
+
+    <!-- Category pills -->
+    <div class="pill-bar">
+      @for (cat of categories; track cat) {
+        <button
+          class="pill"
+          [class.active]="selectedCategory() === cat"
+          (click)="selectCategory(cat)"
+        >{{ cat }}</button>
+      }
+    </div>
+  </div>
+
+  <!-- Result count -->
+  <p class="result-meta">
+    <mat-icon>inventory_2</mat-icon>
+    {{ filteredProducts().length }} รายการ
+  </p>
+
+  <!-- ── Product Grid ── -->
+  <div class="product-grid">
+    @for (product of paginatedProducts(); track product.id; let i = $index) {
+      <div class="product-card animate-fade-up" 
+           [style.animation-delay]="(i * 0.05) + 's'"
+           (click)="openProduct(product)">
+
+        <!-- Image area -->
+        <div class="card-image-wrap">
+          @if (product.imageUrl) {
+            <img [src]="product.imageUrl" [alt]="product.name" class="product-img">
+          } @else {
+            <div class="img-placeholder" [style.--icon-color]="product.iconColor || '#6c63ff'">
+              <mat-icon class="card-icon">{{ product.icon || 'inventory' }}</mat-icon>
+            </div>
+          }
+          
+          @if (product.stock <= 0) {
+            <span class="stock-pill out">หมด</span>
+          } @else if (product.stock <= 10) {
+            <span class="stock-pill low">เหลือน้อย</span>
+          }
+
+          <!-- Admin Overlay Buttons -->
+          @if (isAdmin()) {
+            <div class="admin-card-actions">
+              <button class="admin-mini-btn edit" (click)="editProduct(product, $event)" matTooltip="แก้ไข">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button class="admin-mini-btn delete" (click)="deleteProduct(product, $event)" matTooltip="ลบ">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          }
+        </div>
+
+        <div class="card-body">
+          <span class="cat-label">{{ product.category }}</span>
+          <h3 class="card-name">{{ product.name }}</h3>
+          @if (product.brand) {
+            <p class="card-brand">{{ product.brand }}</p>
+          }
+
+          <!-- Stars -->
+          <div class="star-row">
+            @for (star of getStars(product.rating); track $index) {
+              <mat-icon class="star">{{ star }}</mat-icon>
+            }
+            <span class="review-count">{{ product.reviewCount }}</span>
+          </div>
+
+          <div class="card-footer">
+            <div>
+              <span class="price">฿{{ product.price | number }}</span>
+              <span class="unit"> / {{ product.unit }}</span>
+            </div>
+            <button
+              class="add-btn"
+              [class.added]="isAdded(product.id)"
+              [disabled]="product.stock <= 0"
+              (click)="$event.stopPropagation(); addToCart(product)"
+              matTooltip="{{ product.stock <= 0 ? 'สินค้าหมด' : 'เพิ่มลงตะกร้า' }}"
+            >
+              <mat-icon>{{ isAdded(product.id) ? 'check' : 'add' }}</mat-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- ── Pagination ── -->
+  @if (totalPages() > 1) {
+    <div class="pagination-container">
+      <div class="pagination-info">
+        หน้า {{ currentPage() + 1 }} จาก {{ totalPages() }} ({{ filteredProducts().length }} รายการ)
+      </div>
+      
+      <div class="pagination-controls">
+        <button class="pag-btn" [disabled]="currentPage() === 0" (click)="prevPage()" matTooltip="ก่อนหน้า">
+          <mat-icon>chevron_left</mat-icon>
+        </button>
+
+        <div class="pag-numbers">
+          @for (n of pageNumbers(); track n) {
+            <button 
+              class="num-btn" 
+              [class.active]="n === currentPage()"
+              (click)="goToPage(n)"
+            >{{ n + 1 }}</button>
+          }
+        </div>
+
+        <button class="pag-btn" [disabled]="currentPage() === totalPages() - 1" (click)="nextPage()" matTooltip="ถัดไป">
+          <mat-icon>chevron_right</mat-icon>
+        </button>
+      </div>
+    </div>
+  }
+</div>
+
+<!-- ═══════════════════════════
+     Product Detail Drawer (Premium Redesign)
+     ═══════════════════════════ -->
+@if (selectedProduct()) {
+  <div class="overlay" (click)="closeDetail()">
+    <div class="drawer premium-drawer animate-fade-up" (click)="$event.stopPropagation()">
+      <button class="drawer-close" (click)="closeDetail()" matTooltip="ปิด">
+        <mat-icon>close</mat-icon>
+      </button>
+
+      <div class="drawer-layout">
+        <!-- ── Left Column: Media ── -->
+        <div class="drawer-media">
+          <div class="main-image-viewport">
+            @if (selectedProduct()!.imageUrl) {
+              <img [src]="selectedProduct()!.imageUrl" [alt]="selectedProduct()!.name" class="main-detail-img">
+            } @else {
+              <div class="drawer-img-placeholder" [style.--icon-color]="selectedProduct()!.iconColor || '#6c63ff'">
+                <mat-icon class="drawer-icon">{{ selectedProduct()!.icon || 'inventory' }}</mat-icon>
+              </div>
+            }
+          </div>
+          
+          <!-- Thumbnails (Simulated for UI) -->
+          <div class="thumbnail-strip">
+            <div class="thumb-item active">
+               <img *ngIf="selectedProduct()?.imageUrl" [src]="selectedProduct()!.imageUrl" class="thumb-img">
+               <mat-icon *ngIf="!selectedProduct()?.imageUrl">image</mat-icon>
+            </div>
+            <div class="thumb-item">
+               <img *ngIf="selectedProduct()?.imageUrl" [src]="selectedProduct()!.imageUrl" class="thumb-img blur">
+               <mat-icon *ngIf="!selectedProduct()?.imageUrl">style</mat-icon>
+            </div>
+            <div class="thumb-item">
+               <img *ngIf="selectedProduct()?.imageUrl" [src]="selectedProduct()!.imageUrl" class="thumb-img grayscale">
+               <mat-icon *ngIf="!selectedProduct()?.imageUrl">zoom_in</mat-icon>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Right Column: Content ── -->
+        <div class="drawer-content">
+          <div class="product-header">
+            <span class="premium-cat">{{ selectedProduct()!.category }}</span>
+            <h2 class="premium-name">{{ selectedProduct()!.name }}</h2>
+            @if (selectedProduct()!.brand) {
+              <p class="premium-brand">{{ selectedProduct()!.brand }}</p>
+            }
+          </div>
+
+          <div class="premium-price-row">
+            <div class="price-box">
+              <span class="price-val">฿{{ selectedProduct()!.price | number }}</span>
+              <span class="price-unit"> / {{ selectedProduct()!.unit }}</span>
+            </div>
+            <div class="status-pill" [class]="stockClass(selectedProduct()!.stock)">
+              {{ stockLabel(selectedProduct()!.stock) }}
+            </div>
+          </div>
+
+          @if (isAdmin()) {
+            <div class="admin-stock-control">
+              <span class="stock-label">จัดการสต็อก: <strong>{{ selectedProduct()!.stock }}</strong> {{ selectedProduct()!.unit }}</span>
+              <div class="stock-actions">
+                <button mat-icon-button class="stock-btn" (click)="updateStock(-1)" matTooltip="ลด 1" [disabled]="selectedProduct()!.stock <= 0"><mat-icon>remove</mat-icon></button>
+                <button mat-icon-button class="stock-btn" (click)="updateStock(1)" matTooltip="เพิ่ม 1"><mat-icon>add</mat-icon></button>
+              </div>
+            </div>
+          }
+
+          <div class="rating-strip">
+            <div class="stars">
+              @for (star of getStars(selectedProduct()!.rating); track $index) {
+                <mat-icon class="star">{{ star }}</mat-icon>
+              }
+            </div>
+            <span class="rating-txt">{{ selectedProduct()!.rating }} ({{ selectedProduct()!.reviewCount }} รีวิว)</span>
+          </div>
+
+          <!-- Purchase Options Area -->
+          <div class="purchase-area">
+             <div class="qty-selector">
+                <span class="label">จำนวน:</span>
+                <div class="qty-controls">
+                   <button class="qty-btn" mat-icon-button (click)="decrementQty()"><mat-icon>remove</mat-icon></button>
+                   <span class="qty-val">{{ selectedQty() }}</span>
+                   <button class="qty-btn" mat-icon-button (click)="incrementQty()"><mat-icon>add</mat-icon></button>
+                </div>
+             </div>
+
+             <button
+                class="premium-add-btn"
+                [disabled]="selectedProduct()!.stock <= 0"
+                (click)="addToCart(selectedProduct()!, selectedQty()); closeDetail()"
+              >
+                <mat-icon>shopping_bag</mat-icon>
+                {{ selectedProduct()!.stock <= 0 ? 'สินค้าหมด' : 'เพิ่มลงตะกร้า' }}
+              </button>
+          </div>
+
+          <!-- Delivery Info -->
+          <div class="shipping-info">
+             <div class="info-item">
+                <mat-icon>local_shipping</mat-icon>
+                <span>จัดส่งฟรีเมื่อซื้อครบ ฿500 บาท</span>
+             </div>
+             <div class="info-item">
+                <mat-icon>history_toggle_off</mat-icon>
+                <span>จัดส่งภายใน 1-3 วันทำการ</span>
+             </div>
+          </div>
+
+          <!-- Accordion Sections -->
+          <div class="premium-accordions">
+             <details open class="acc-item">
+                <summary>รายละเอียดสินค้า <mat-icon>expand_more</mat-icon></summary>
+                <div class="acc-content">
+                   <p>{{ selectedProduct()!.description }}</p>
+                   @if (selectedProduct()!.forSpecies?.length) {
+                    <div class="species-list">
+                      <strong>เหมาะสำหรับ:</strong> {{ selectedProduct()!.forSpecies!.join(', ') }}
+                    </div>
+                  }
+                </div>
+             </details>
+
+             <details class="acc-item">
+                <summary>ข้อมูลประกอบการตัดสินใจ <mat-icon>expand_more</mat-icon></summary>
+                <div class="acc-content">
+                   <ul>
+                      <li>สินค้าคุณภาพเกรดพรีเมียม</li>
+                      <li>ผ่านการรับรองมาตรฐานสากล</li>
+                      <li>ได้รับความนิยมในคลินิกสัตว์หน้าใหม่</li>
+                   </ul>
+                </div>
+             </details>
+
+             <details class="acc-item">
+                <summary>การจัดส่งและการคืนเงิน <mat-icon>expand_more</mat-icon></summary>
+                <div class="acc-content">
+                   <p>เรามอบบริการส่งฟรีเมื่อช้อปครบ 500 บาท และคุณสามารถคืนสินค้าได้ภายใน 7 วันหากสินค้ามีปัญหาจากการผลิต</p>
+                </div>
+             </details>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+}

@@ -1,0 +1,121 @@
+<div class="impeccable-page bills-page">
+  <div class="page-header">
+    <div class="header-titles">
+      <h1>ค่าใช้จ่ายและการชำระเงิน</h1>
+      <p class="subtitle">ตรวจสอบและชำระค่าบริการรักษาสัตว์เลี้ยงของคุณ</p>
+    </div>
+  </div>
+
+  <div class="bills-container">
+    @if (pendingBills().length > 0) {
+      <div class="section-title">
+        <mat-icon color="warn">pending_actions</mat-icon>
+        <h2>ค้างชำระ ({{ pendingBills().length }})</h2>
+      </div>
+
+      <div class="bill-grid">
+        @for (bill of pendingBills(); track bill.id) {
+          <mat-card class="bill-card pending">
+            <mat-card-header>
+              <div mat-card-avatar class="bill-avatar pending-avatar">
+                <mat-icon>receipt_long</mat-icon>
+              </div>
+              <mat-card-title>ค่ารักษา: {{ petName(bill.petId) }}</mat-card-title>
+              <mat-card-subtitle>{{ formatDate(bill.startAt) }}</mat-card-subtitle>
+            </mat-card-header>
+            
+            <mat-card-content>
+              <div class="bill-info">
+                <div class="info-row">
+                  <span class="lbl">แพทย์ผู้รักษา:</span>
+                  <span class="val">{{ vetName(bill.vetId) }}</span>
+                </div>
+                <div class="info-row">
+                  <span class="lbl">อาการ:</span>
+                  <span class="val">{{ bill.reason }}</span>
+                </div>
+              </div>
+
+              <div class="bill-items-divider"></div>
+              
+              <div class="bill-items">
+                @for (item of bill.billItems; track item.id) {
+                  <div class="item-row">
+                    <span class="item-name">{{ item.name }}</span>
+                    <span class="item-price">฿{{ item.price | number }}</span>
+                  </div>
+                }
+              </div>
+
+              <div class="bill-total pending-total">
+                <span>ยอดชำระสุทธิ</span>
+                <span class="total-amount">฿{{ bill.totalCost | number }}</span>
+              </div>
+            </mat-card-content>
+
+            <mat-card-actions align="end" class="bill-actions">
+               @if (isOwner()) {
+                 <button mat-raised-button color="primary" class="pay-btn" (click)="payBill(bill.id)">
+                   <mat-icon>payment</mat-icon> ชำระเงินทันที
+                 </button>
+               } @else {
+                 <button mat-stroked-button disabled>รอเจ้าของชำระเงิน</button>
+               }
+            </mat-card-actions>
+          </mat-card>
+        }
+      </div>
+    }
+
+    <!-- Divider if both exist -->
+    @if (pendingBills().length > 0 && paidBills().length > 0) {
+      <div class="section-divider"></div>
+    }
+
+    @if (paidBills().length > 0) {
+      <div class="section-title">
+        <mat-icon style="color: var(--success);">check_circle</mat-icon>
+        <h2>ประวัติการชำระเงิน ({{ paidBills().length }})</h2>
+      </div>
+
+      <div class="bill-grid">
+        @for (bill of paidBills(); track bill.id) {
+          <mat-card class="bill-card paid">
+            <mat-card-header>
+              <div mat-card-avatar class="bill-avatar paid-avatar">
+                <mat-icon>task_alt</mat-icon>
+              </div>
+              <mat-card-title>บิลชำระแล้ว: {{ petName(bill.petId) }}</mat-card-title>
+              <mat-card-subtitle>{{ formatDate(bill.paidAt || bill.createdAt) }}</mat-card-subtitle>
+            </mat-card-header>
+            
+            <mat-card-content>
+               <div class="bill-summary-compact">
+                 <div class="compact-info">
+                   <div class="info-item">
+                     <span class="lbl">รักษาโดย:</span> {{ vetName(bill.vetId) }}
+                   </div>
+                   <div class="info-item">
+                     <span class="lbl">อาการ:</span> {{ bill.reason }}
+                   </div>
+                 </div>
+                 <div class="bill-total paid-total">
+                   <span class="total-amount">฿{{ bill.totalCost | number }}</span>
+                   <span class="status-badge">ชำระแล้ว</span>
+                 </div>
+               </div>
+            </mat-card-content>
+          </mat-card>
+        }
+      </div>
+    }
+
+    @if (allBills().length === 0) {
+      <div class="empty-state">
+        <div class="empty-icon"><mat-icon>receipt</mat-icon></div>
+        <h3>ไม่มีรายการค่าใช้จ่าย</h3>
+        <p>คุณยังไม่มีประวัติหรือรายการค่าใช้จ่ายค้างชำระในขณะนี้</p>
+      </div>
+    }
+  </div>
+</div>

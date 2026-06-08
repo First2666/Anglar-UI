@@ -1,0 +1,248 @@
+<div class="db-wrap">
+  <div class="db-shell">
+
+    <!-- ─── Main Grid ─── -->
+    <div class="db-grid">
+
+      <!-- ─── Hero Advertisement Banner (Top) ─── -->
+      <div class="hero-banner-card animate-fade-up">
+        <div class="banner-viewport">
+          <div class="banner-track" [style.transform]="'translateX(' + (-currentBannerIndex() * 100) + '%)'">
+            @for (banner of banners(); track banner.id) {
+            <div class="banner-slide" [style.background]="banner.bgColor">
+              <div class="banner-content">
+                <h2 [style.color]="banner.textColor">{{ banner.title }}</h2>
+                <p [style.color]="banner.textColor">{{ banner.subtitle }}</p>
+                <button mat-flat-button [routerLink]="banner.link" class="banner-btn">
+                  {{ banner.buttonText }}
+                </button>
+              </div>
+              <div class="banner-image">
+                <img [src]="banner.imageUrl" [alt]="banner.title">
+              </div>
+            </div>
+            }
+          </div>
+        </div>
+        <!-- Banner Dots -->
+        <div class="banner-dots">
+          @for (banner of banners(); track banner.id; let i = $index) {
+          <div class="b-dot" [class.active]="i === currentBannerIndex()" (click)="goToBannerSlide(i)"></div>
+          }
+        </div>
+      </div>
+
+      <!-- ════════════════════════════════════
+           LEFT COLUMN
+      ════════════════════════════════════ -->
+      <div class="db-left">
+
+        <!-- Main Hero Card -->
+        <!-- Main Hero Card -->
+        <div class="hero-card animate-fade-up stagger-1">
+          <div class="hero-info">
+            <div class="hero-header">
+              @if (auth.role === 'owner') {
+              <h1 class="hero-title">สวัสดี, <span class="name-highlight">{{ auth.fullName }}</span></h1>
+              <p class="hero-sub">มาดูแลเพื่อนตัวน้อยของคุณกันเถอะ</p>
+              } @else {
+              <h1 class="hero-title">แผงควบคุม</h1>
+              <p class="hero-sub">ภาพรวมการดำเนินงานประจำวัน</p>
+              }
+            </div>
+
+            <!-- ── OWNER: Pet carousel (Inline in hero for better space usage) ── -->
+            @if (auth.role === 'owner') {
+            <div class="pet-carousel">
+              @for (pet of scopedPets(); track pet.id) {
+              <div class="pet-item" routerLink="/pets" matTooltip="{{ pet.name }}">
+                <div class="pet-ring" [ngClass]="'ring-' + pet.species.toLowerCase()">
+                  <mat-icon>{{ pet.species | speciesIcon }}</mat-icon>
+                </div>
+                <span class="pet-name">{{ pet.name }}</span>
+              </div>
+              }
+              @if (scopedPets().length === 0) {
+              <div class="add-pet-cta" routerLink="/pets">
+                <div class="cta-ring">
+                  <mat-icon>add</mat-icon>
+                </div>
+                <div class="cta-text">
+                  <span class="cta-main">เพิ่มสัตว์เลี้ยงตัวแรก</span>
+                  <span class="cta-sub">เริ่มต้นดูแลเพื่อนตัวน้อยของคุณ</span>
+                </div>
+              </div>
+              }
+            </div>
+            }
+          </div>
+
+          <!-- ── STAFF: KPI Side Panel (Only for non-owners) ── -->
+          @if (auth.role !== 'owner') {
+          <div class="hero-stats">
+            <div class="kpi-main">
+              <span class="kpi-big-num">{{ today().length }}</span>
+              <span class="kpi-big-label">คิววันนี้</span>
+            </div>
+
+            <div class="kpi-grid">
+              <div class="kpi-mini-card waiting" matTooltip="รอตรวจ">
+                <span class="kpi-mini-val">{{ checkedInToday().length }}</span>
+                <span class="kpi-mini-label">รอตรวจ</span>
+              </div>
+              <div class="kpi-mini-card inprog" matTooltip="กำลังตรวจ">
+                <span class="kpi-mini-val">{{ inSessionToday().length }}</span>
+                <span class="kpi-mini-label">กำลังตรวจ</span>
+              </div>
+              <div class="kpi-mini-card done" matTooltip="เสร็จสิ้น">
+                <span class="kpi-mini-val">{{ completedToday().length }}</span>
+                <span class="kpi-mini-label">เสร็จสิ้น</span>
+              </div>
+            </div>
+          </div>
+          }
+        </div>
+
+        <!-- ── Queue / Upcoming List (Moved to Left for prominence) ── -->
+        <div class="queue-card section-spacer animate-fade-up stagger-2">
+          <div class="queue-header">
+            <span>{{ auth.role === 'owner' ? 'นัดหมายที่กำลังจะถึง' : 'คิวที่กำลังดำเนินการ (Live)' }}</span>
+            @if (inSessionToday().length > 0 || checkedInToday().length > 0) {
+            <span class="live-dot"></span>
+            }
+          </div>
+
+          <div class="queue-list">
+            @if (auth.role === 'owner') {
+            @for (a of upcoming(); track a.id) {
+            <div class="queue-item" routerLink="/appointments">
+              <div class="qi-info">
+                <span class="qi-title">{{ petName(a.petId) }}</span>
+                <span class="qi-sub">{{ when(a.startAt) }}</span>
+              </div>
+              <div class="qi-dot"></div>
+            </div>
+            }
+            @if (upcoming().length === 0) {
+            <div class="queue-empty">ไม่มีนัดหมายที่กำลังจะถึง</div>
+            }
+
+            } @else {
+            @for (a of scheduledToday(); track a.id) {
+            <div class="queue-item" [routerLink]="['/appointments']" matTooltip="รอยืนยัน/เข้าตรวจ">
+              <div class="qi-info">
+                <span class="qi-title">{{ petName(a.petId) }}</span>
+                <span class="qi-owner text-muted" style="font-size: 0.85rem;">{{ ownerName(a.ownerId) }}</span>
+                <span class="qi-sub">{{ getTime(a.startAt) }} น. · {{ a.reason }}</span>
+              </div>
+              <div class="qi-dot"></div>
+            </div>
+            }
+            @for (a of inSessionToday(); track a.id) {
+            <div class="queue-item inprog" routerLink="/medical-records">
+              <div class="qi-info">
+                <span class="qi-title">
+                  {{ petName(a.petId) }}
+                  <span class="qi-badge red">กำลังตรวจ</span>
+                </span>
+                <span class="qi-owner text-muted" style="font-size: 0.85rem;">{{ ownerName(a.ownerId) }}</span>
+                <span class="qi-sub">{{ a.reason }} · {{ vetName(a.vetId ?? '') }}</span>
+              </div>
+              <div class="qi-dot active"></div>
+            </div>
+            }
+            @for (a of checkedInToday(); track a.id) {
+            <div class="queue-item" [routerLink]="auth.role === 'vet' ? ['/treatment', a.id] : ['/appointments']"
+                 matTooltip="คลิกเพื่อจัดการคิว (เช็คอิน)">
+              <div class="qi-info">
+                <span class="qi-title">
+                  {{ petName(a.petId) }}
+                  <span class="qi-badge yellow">รอตรวจ</span>
+                </span>
+                <span class="qi-owner text-muted" style="font-size: 0.85rem;">{{ ownerName(a.ownerId) }}</span>
+                <span class="qi-sub">{{ getTime(a.startAt) }} น. · {{ a.reason }}</span>
+              </div>
+              <div class="qi-dot waiting"></div>
+            </div>
+            }
+            @if (inSessionToday().length === 0 && checkedInToday().length === 0) {
+            <div class="queue-empty">ไม่มีคิวที่รอดำเนินการ</div>
+            }
+            }
+          </div>
+
+          <!-- Bottom pill with indicator -->
+          <div class="queue-foot">
+            <div class="foot-pill">
+              @if (auth.role !== 'owner' && (inSessionToday().length > 0 || checkedInToday().length > 0)) {
+              <div class="foot-dot glow"></div>
+              } @else {
+              <div class="foot-dot"></div>
+              }
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /db-left -->
+
+      <!-- ════════════════════════════════════
+           RIGHT COLUMN
+      ════════════════════════════════════ -->
+      <div class="db-right">
+
+        <!-- Recommendations Section -->
+
+        <!-- ── Product Recommendations Slideshow ── -->
+        <!-- ── Recommended Products: Bento Redesign ── -->
+        <div class="recommended-card animate-fade-up stagger-3">
+          <div class="rc-header">
+            <div class="rc-title-pill">
+              <mat-icon>shopping_bag</mat-icon>
+              <span>สินค้าแนะนำ</span>
+            </div>
+            <button mat-icon-button routerLink="/shop" matTooltip="ดูทั้งหมด">
+              <mat-icon>open_in_new</mat-icon>
+            </button>
+          </div>
+
+          <div class="rc-grid">
+            <!-- Spotlight Item (Top 1) -->
+            @if (recommendedProducts().length > 0) {
+            @let spotlight = recommendedProducts()[0];
+            <div class="spotlight-item" routerLink="/shop">
+              <div class="spotlight-overlay"></div>
+              <img [src]="spotlight.imageUrl" [alt]="spotlight.name">
+              <div class="spotlight-content">
+                <div class="spotlight-badge">พรีเมียม</div>
+                <h3 class="spotlight-name">{{ spotlight.name }}</h3>
+                <div class="spotlight-footer">
+                  <span class="spotlight-price">{{ spotlight.price | currency:'THB':'symbol':'1.0-0' }}</span>
+                  <button class="spotlight-buy-btn">ซื้อเลย</button>
+                </div>
+              </div>
+            </div>
+            }
+
+            <!-- Trending List (Items 2-3) -->
+            <div class="trending-list">
+              @for (product of recommendedProducts().slice(1, 3); track product.id) {
+              <div class="trending-item" routerLink="/shop">
+                <div class="ti-img">
+                  <img [src]="product.imageUrl" [alt]="product.name">
+                </div>
+                <div class="ti-info">
+                  <span class="ti-name">{{ product.name }}</span>
+                  <span class="ti-brand">{{ product.brand || product.category }}</span>
+                  <span class="ti-price">{{ product.price | currency:'THB':'symbol':'1.0-0' }}</span>
+                </div>
+                <mat-icon class="ti-arrow">chevron_right</mat-icon>
+              </div>
+              }
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /db-right -->
+    </div>
+  </div>
+</div>

@@ -1,0 +1,53 @@
+<div class="impeccable-page">
+  <div class="page-header border-bottom" style="margin-bottom: 24px;">
+    <div class="header-titles">
+      <h1>ปฏิทินนัดหมาย</h1>
+    </div>
+    <div class="header-actions" style="display: flex; align-items: center; gap: 8px;">
+      <button mat-flat-button (click)="today()" style="border-radius: 999px;">
+        วันนี้
+      </button>
+      <button mat-icon-button (click)="prevMonth()"><mat-icon>chevron_left</mat-icon></button>
+      <button mat-icon-button (click)="nextMonth()"><mat-icon>chevron_right</mat-icon></button>
+    </div>
+  </div>
+
+  <div class="glass-panel">
+    <div style="padding: 16px; text-align: center; border-bottom: 1px solid var(--border-color); background: rgba(0,0,0,0.02);">
+    <h3 style="margin: 0; font-size: 16px;">{{ monthLabel() }}</h3>
+  </div>
+
+  <div class="ig-calendar-grid">
+    <div class="ig-cal-header-row">
+      @for (day of ['อา','จ','อ','พ','พฤ','ศ','ส']; track day) {
+        <div class="ig-cal-header-cell">{{ day }}</div>
+      }
+    </div>
+
+    @for (week of weeks(); track $index) {
+      <div class="ig-cal-row">
+        @for (day of week; track day.date.toISOString()) {
+          <div class="ig-cal-cell" 
+               [class.other-month]="!day.isCurrentMonth" 
+               [class.today]="day.isToday"
+               [class.has-appts]="day.appointmentCount > 0">
+            <span class="day-num">{{ day.date.getDate() }}</span>
+            
+            @if (day.appointmentCount > 0) {
+              <div class="appt-dots">
+                @for (label of day.appointmentLabels.slice(0, 3); track $index) {
+                  <span class="appt-dot" [matTooltip]="label"></span>
+                }
+              </div>
+            }
+          </div>
+        }
+      </div>
+    }
+  </div>
+
+  <div style="padding: 24px 16px; text-align: center;">
+    <p class="text-muted" style="font-size: 14px;">คลิกที่วันที่เพื่อดูรายละเอียดหรือเพิ่มการนัดหมาย</p>
+  </div>
+  </div>
+</div>

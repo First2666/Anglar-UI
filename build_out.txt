@@ -1,0 +1,327 @@
+﻿[33mโฏ[39m Building...
+[32mโ”[39m Building...
+[1mInitial chunk files[22m[2m | [22m[1mNames[22m        [2m | [22m [1mRaw size[22m[2m | [22m[1mEstimated transfer size[22m
+[32mmain-UGJ4EXSH.js[39m   [2m | [22m[2mmain[22m         [2m | [22m[36m932.45 kB[39m[2m | [22m              [36m188.55 kB[39m
+[32mstyles-3LOL6PQB.css[39m[2m | [22m[2mstyles[22m       [2m | [22m [36m30.49 kB[39m[2m | [22m                [36m3.67 kB[39m
+
+[1m [22m                  [2m | [22m[1mInitial total[22m[2m | [22m[1m[93m962.94 kB[39m[22m[2m | [22m              [1m192.22 kB[22m
+
+Application bundle generation failed. [3.688 seconds] - 2026-03-17T05:41:51.351Z
+
+node.exe : 
+[1m[33m[33mโ–ฒ [43;
+33m[[43;30mWARNING[43
+;33m][0m [1mNG8113: 
+NgClass is not used 
+within the template of 
+Calendar[0m 
+[1m[35m[plugin 
+angular-compiler][0m
+At line:1 char:1
++ & "C:\Program 
+Files\nodejs/node.exe" 
+"C:\Program 
+Files\nodejs/node_mo 
+...
++ ~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~
+~~
+    + CategoryInfo     
+         : NotSpecifi  
+  ed: ([1m[33m[33   
+ mโ...r-compiler][    
+0m:String) [], Rem    
+oteException
+    + FullyQualifiedEr 
+   rorId : NativeComm  
+  andError
+ 
+
+    src/app/pages/calen
+dar/calendar.ts:23:79:
+[37m      23 โ” 
+...odule, 
+MatButtonModule, 
+MatIconModule, 
+MatTooltipModule, 
+[32mNgClass[37m],
+         โ•ต           
+                       
+                       
+    [32m~~~~~~~[0m
+
+
+[33mโ–ฒ [43;33m[[43;
+30mWARNING[43;33m][0m
+ [1mNG8113: NgClass 
+is not used within the 
+template of Login[0m 
+[1m[35m[plugin 
+angular-compiler][0m
+
+    src/app/pages/login
+/login.ts:16:137:
+[37m      16 โ” 
+...ule, MatIconModule, 
+MatSnackBarModule, 
+[32mNgClass[37m, 
+MatTooltipModule],
+         โ•ต           
+                       
+         
+[32m~~~~~~~[0m
+
+
+[33mโ–ฒ [43;33m[[43;
+30mWARNING[43;33m][0m
+ [1mNG8113: NgClass 
+is not used within the 
+template of 
+MedicalRecordsPage[0m 
+[1m[35m[plugin 
+angular-compiler][0m
+
+    src/app/pages/medic
+al-records/medical-reco
+rds.ts:22:203:
+[37m      22 โ” 
+...ule, 
+MatSnackBarModule, 
+MatTooltipModule, 
+MatMenuModule, 
+[32mNgClass[37m],
+         โ•ต           
+                       
+                       
+    [32m~~~~~~~[0m
+
+
+[33mโ–ฒ [43;33m[[43;
+30mWARNING[43;33m][0m
+ [1mNG8113: NgClass 
+is not used within the 
+template of Owners[0m 
+[1m[35m[plugin 
+angular-compiler][0m
+
+    src/app/pages/owner
+s/owners.ts:16:169:
+[37m      16 โ” 
+...le, MatTableModule, 
+MatSnackBarModule, 
+MatTooltipModule, 
+[32mNgClass[37m],
+         โ•ต           
+                       
+                       
+    [32m~~~~~~~[0m
+
+
+[33mโ–ฒ [43;33m[[43;
+30mWARNING[43;33m][0m
+ [1mNG8113: 
+LowerCasePipe is not 
+used within the 
+template of Pets[0m 
+[1m[35m[plugin 
+angular-compiler][0m
+
+    src/app/pages/pets/
+pets.ts:23:42:
+[37m      23 โ” 
+...iveFormsModule, 
+NgClass, [32mLowerCase
+Pipe[37m, SlicePipe, 
+MatMenuModul...
+         โ•ต           
+                  
+[32m~~~~~~~~~~~~~[0m
+
+
+[33mโ–ฒ [43;33m[[43;
+30mWARNING[43;33m][0m
+ [1mNG8113: SlicePipe 
+is not used within the 
+template of Pets[0m 
+[1m[35m[plugin 
+angular-compiler][0m
+
+    src/app/pages/pets/
+pets.ts:23:57:
+[37m      23 โ” 
+...e, NgClass, 
+LowerCasePipe, 
+[32mSlicePipe[37m, 
+MatMenuModule, 
+MatCardMod...
+         โ•ต           
+                    
+[32m~~~~~~~~~[0m
+
+
+[33mโ–ฒ [43;33m[[43;
+30mWARNING[43;33m][0m
+ [1mNG8113: NgClass 
+is not used within the 
+template of Vets[0m 
+[1m[35m[plugin 
+angular-compiler][0m
+
+    src/app/pages/vets/
+vets.ts:20:226:
+[37m      20 โ” ... 
+MatChipsModule, 
+MatSlideToggleModule, 
+MatTooltipModule, 
+[32mNgClass[37m],
+         โ•ต           
+                       
+                       
+    [32m~~~~~~~[0m
+
+
+[33mโ–ฒ [43;33m[[43;
+30mWARNING[43;33m][0m
+ [1mDeprecation[0m 
+[1m[35m[plugin 
+angular-sass][0m
+
+    src/app/pages/vets/
+vets.scss:3:8:
+[37m      3 โ” 
+@import [32m[37m'../o
+wners/owners.scss';
+        โ•ต         
+[32m^[0m
+
+
+  Sass @import rules 
+are deprecated and 
+will be removed in 
+Dart Sass 3.0.0.
+  
+  More info and 
+automated migrator: [4
+mhttps://sass-lang.com/
+d/import[0m
+
+
+[33mโ–ฒ [43;33m[[43;
+30mWARNING[43;33m][0m
+ [1mbundle initial 
+exceeded maximum 
+budget. Budget 500.00 
+kB was not met by 
+462.94 kB with a total 
+of 962.94 kB.[0m
+
+
+[33mโ–ฒ [43;33m[[43;
+30mWARNING[43;33m][0m
+ [1msrc/app/pages/logi
+n/login.scss exceeded 
+maximum budget. Budget 
+4.00 kB was not met by 
+412 bytes with a total 
+of 4.41 kB.[0m
+
+
+[33mโ–ฒ [43;33m[[43;
+30mWARNING[43;33m][0m
+ [1msrc/app/pages/repo
+rts/reports.scss 
+exceeded maximum 
+budget. Budget 4.00 kB 
+was not met by 2.71 kB 
+with a total of 6.71 
+kB.[0m
+
+
+[33mโ–ฒ [43;33m[[43;
+30mWARNING[43;33m][0m
+ [1msrc/app/pages/vets
+/vets.scss exceeded 
+maximum budget. Budget 
+4.00 kB was not met by 
+1.92 kB with a total 
+of 5.92 kB.[0m
+
+
+[33mโ–ฒ [43;33m[[43;
+30mWARNING[43;33m][0m
+ [1msrc/app/pages/pets
+/pets.scss exceeded 
+maximum budget. Budget 
+4.00 kB was not met by 
+3.88 kB with a total 
+of 7.88 kB.[0m
+
+
+[33mโ–ฒ [43;33m[[43;
+30mWARNING[43;33m][0m
+ [1msrc/app/pages/prof
+ile/profile.scss 
+exceeded maximum 
+budget. Budget 4.00 kB 
+was not met by 1.33 kB 
+with a total of 5.33 
+kB.[0m
+
+
+[33mโ–ฒ [43;33m[[43;
+30mWARNING[43;33m][0m
+ [1msrc/app/pages/dash
+board/dashboard.scss 
+exceeded maximum 
+budget. Budget 4.00 kB 
+was not met by 2.77 kB 
+with a total of 6.77 
+kB.[0m
+
+
+[33mโ–ฒ [43;33m[[43;
+30mWARNING[43;33m][0m
+ [1msrc/app/pages/appo
+intments/appointments.s
+css exceeded maximum 
+budget. Budget 4.00 kB 
+was not met by 3.65 kB 
+with a total of 7.65 
+kB.[0m
+
+
+[33mโ–ฒ [43;33m[[43;
+30mWARNING[43;33m][0m
+ [1msrc/app/pages/owne
+rs/owners.scss 
+exceeded maximum 
+budget. Budget 4.00 kB 
+was not met by 1.08 kB 
+with a total of 5.08 
+kB.[0m
+
+
+[33mโ–ฒ [43;33m[[43;
+30mWARNING[43;33m][0m
+ [1msrc/app/pages/medi
+cal-records/medical-rec
+ords.scss exceeded 
+maximum budget. Budget 
+4.00 kB was not met by 
+9.21 kB with a total 
+of 13.21 kB.[0m
+
+[39m[22m
+[1m[31m[31mX [41;31
+m[[41;97mERROR[41;31m
+][0m [1msrc/app/pages
+/medical-records/medica
+l-records.scss 
+exceeded maximum 
+budget. Budget 8.00 kB 
+was not met by 5.21 kB 
+with a total of 13.21 
+kB.[0m
+
+[39m[22m

@@ -1,0 +1,102 @@
+.confirm-dialog-wrap {
+  padding: 32px;
+  background: var(--card-bg);
+  color: var(--text-main);
+  border-radius: 28px;
+  text-align: center;
+  max-width: 400px;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+
+  .dialog-header {
+    margin-bottom: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+
+    .icon-orb {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+
+      mat-icon {
+        font-size: 40px;
+        width: 40px;
+        height: 40px;
+        opacity: 0.9;
+      }
+    }
+
+    .dialog-title {
+      font-size: 24px;
+      font-weight: 800;
+      margin: 0;
+      letter-spacing: -0.01em;
+      line-height: 1.2;
+    }
+  }
+
+  .dialog-content {
+    margin-bottom: 32px;
+
+    p {
+      font-size: 16px;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin: 0;
+      padding: 0 16px;
+    }
+  }
+
+  .dialog-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+
+    button {
+      padding: 12px 28px;
+      border-radius: 14px;
+      font-size: 15px;
+      font-weight: 700;
+      min-width: 120px;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+
+      &.cancel-btn {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid var(--border-color);
+        color: var(--text-main);
+
+        &:hover {
+          background: rgba(255, 255, 255, 0.1);
+          transform: translateY(-1px);
+        }
+      }
+
+      &.confirm-btn {
+        border: none;
+        color: var(--app-bg);
+
+        &:hover {
+          opacity: 0.9;
+          transform: translateY(-2px);
+          box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        &:active {
+          transform: translateY(0);
+        }
+      }
+    }
+  }
+}
+
+/* Override Mat Dialog container styles for consistent glassmorphism */
+:host {
+  display: block;
+}

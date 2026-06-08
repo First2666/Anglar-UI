@@ -1,0 +1,112 @@
+.impeccable-page {
+  padding: 8px 16px 24px 0;
+  max-width: 1400px;
+  margin: 0 auto;
+  min-height: 100vh;
+  background-color: transparent;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 32px;
+  
+  .header-titles {
+    h1 {
+      font-size: 32px;
+      font-weight: 800;
+      margin: 0 0 8px;
+      color: var(--text-main);
+      letter-spacing: -1px;
+    }
+  }
+}
+
+.glass-panel {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 24px;
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.text-muted { color: var(--text-muted); }
+
+.ig-calendar-grid {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.ig-cal-header-row {
+  display: flex;
+  width: 100%;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.ig-cal-header-cell {
+  flex: 1;
+  text-align: center;
+  padding: 12px 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.ig-cal-row {
+  display: flex;
+  width: 100%;
+}
+
+.ig-cal-cell {
+  flex: 1;
+  aspect-ratio: 1 / 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1px solid var(--border-color);
+  border-right: 1px solid var(--border-color);
+  position: relative;
+  cursor: pointer;
+  
+  &:last-child {
+    border-right: none;
+  }
+  
+  &.other-month {
+    opacity: 0.3;
+  }
+  
+  .day-num {
+    font-size: 16px;
+    font-weight: 500;
+  }
+  
+  &.today .day-num {
+    background: var(--ig-red);
+    color: white;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .appt-dots {
+    display: flex;
+    gap: 3px;
+    margin-top: 4px;
+    position: absolute;
+    bottom: 8px;
+  }
+  
+  .appt-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--ig-blue);
+  }
+}

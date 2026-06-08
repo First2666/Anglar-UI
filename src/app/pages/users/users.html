@@ -1,0 +1,319 @@
+<div class="users-page">
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-left">
+      <div class="page-icon">
+        <mat-icon>manage_accounts</mat-icon>
+      </div>
+      <div>
+        <h1>จัดการผู้ใช้งาน</h1>
+        <p class="subtitle">ดูรายชื่อผู้ใช้ทั้งหมดและประวัติการเข้าสู่ระบบ</p>
+      </div>
+    </div>
+    <a routerLink="/register" class="add-user-btn">
+      <mat-icon>person_add</mat-icon>
+      <span>เพิ่มผู้ใช้</span>
+    </a>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon" style="--c:#6366f1"><mat-icon>people</mat-icon></div>
+      <div class="stat-info">
+        <span class="stat-num">{{ stats().total }}</span>
+        <span class="stat-label">ผู้ใช้ทั้งหมด</span>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon" style="--c:#f59e0b"><mat-icon>admin_panel_settings</mat-icon></div>
+      <div class="stat-info">
+        <span class="stat-num">{{ stats().admin }}</span>
+        <span class="stat-label">แอดมิน</span>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon" style="--c:#10b981"><mat-icon>medical_services</mat-icon></div>
+      <div class="stat-info">
+        <span class="stat-num">{{ stats().vet }}</span>
+        <span class="stat-label">สัตวแพทย์</span>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon" style="--c:#8b5cf6"><mat-icon>pets</mat-icon></div>
+      <div class="stat-info">
+        <span class="stat-num">{{ stats().owner }}</span>
+        <span class="stat-label">เจ้าของสัตว์เลี้ยง</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tab-bar">
+    <button class="tab-btn" [class.active]="activeTab() === 'users'" (click)="setTab('users')">
+      <mat-icon>people</mat-icon>
+      <span>รายชื่อผู้ใช้</span>
+    </button>
+    <button class="tab-btn" [class.active]="activeTab() === 'history'" (click)="setTab('history')">
+      <mat-icon>history</mat-icon>
+      <span>ประวัติการเข้าสู่ระบบ</span>
+      @if (loginHistory().length > 0) {
+        <span class="badge">{{ loginHistory().length }}</span>
+      }
+    </button>
+  </div>
+
+  <!-- ─── USERS TAB ─── -->
+  @if (activeTab() === 'users') {
+
+    <!-- Filters -->
+    <div class="filter-bar">
+      <div class="search-wrap">
+        <mat-icon>search</mat-icon>
+        <input type="text" placeholder="ค้นหาชื่อ, username, อีเมล..."
+          [value]="searchQuery()"
+          (input)="setSearch($any($event.target).value)" />
+      </div>
+      <div class="role-filters">
+        @for (r of roleOptions; track r.value) {
+          <button class="filter-chip" [class.active]="filterRole() === r.value"
+            (click)="setFilter(r.value)">{{ r.label }}</button>
+        }
+      </div>
+    </div>
+
+    <!-- User Cards Grid -->
+    <div class="users-grid">
+      @for (user of filteredUsers(); track user.id) {
+        <div class="user-card clickable" [class.is-self]="user.id === currentUserId()" (click)="openDetail(user.id)">
+
+          <!-- Card Top -->
+          <div class="card-top">
+            <div class="user-avatar" [style.--role-c]="roleColors[user.role]">
+              <mat-icon>{{ roleIcons[user.role] }}</mat-icon>
+            </div>
+            <div class="user-meta">
+              <span class="user-name">{{ user.fullName }}</span>
+              <span class="user-username">&#64;{{ user.username }}</span>
+            </div>
+            <div class="role-badge" [style.background]="'color-mix(in srgb,' + roleColors[user.role] + ' 15%, transparent)'"
+              [style.color]="roleColors[user.role]"
+              [style.border-color]="'color-mix(in srgb,' + roleColors[user.role] + ' 30%, transparent)'">
+              {{ roleLabels[user.role] }}
+            </div>
+          </div>
+
+          <!-- Card Info -->
+          <div class="card-info">
+            @if (user.email) {
+              <div class="info-row">
+                <mat-icon>mail_outline</mat-icon>
+                <span>{{ user.email }}</span>
+              </div>
+            }
+            @if (user.phone) {
+              <div class="info-row">
+                <mat-icon>phone</mat-icon>
+                <span>{{ user.phone }}</span>
+              </div>
+            }
+            <div class="info-row">
+              <mat-icon>login</mat-icon>
+              <span>เข้าสู่ระบบ {{ user.loginCount ?? 0 }} ครั้ง</span>
+            </div>
+            @if (user.lastLoginAt) {
+              <div class="info-row">
+                <mat-icon>schedule</mat-icon>
+                <span>ล่าสุด: {{ formatDate(user.lastLoginAt) }}</span>
+              </div>
+            }
+            <div class="info-row">
+              <mat-icon>calendar_today</mat-icon>
+              <span>สมัครเมื่อ: {{ formatDate(user.createdAt) }}</span>
+            </div>
+          </div>
+
+          <!-- Card Footer -->
+          <div class="card-footer">
+            @if (user.id === currentUserId()) {
+              <span class="you-badge"><mat-icon>person_pin</mat-icon> คุณ</span>
+            } @else {
+              <button class="delete-btn" (click)="askDelete(user.id); $event.stopPropagation()" matTooltip="ลบผู้ใช้">
+                <mat-icon>delete_outline</mat-icon>
+                <span>ลบ</span>
+              </button>
+            }
+          </div>
+        </div>
+      }
+
+      @if (filteredUsers().length === 0) {
+        <div class="empty-state">
+          <mat-icon>manage_search</mat-icon>
+          <p>ไม่พบผู้ใช้ที่ตรงกับการค้นหา</p>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- ─── HISTORY TAB ─── -->
+  @if (activeTab() === 'history') {
+    <div class="history-section">
+      @if (recentHistory().length === 0) {
+        <div class="empty-state">
+          <mat-icon>history</mat-icon>
+          <p>ยังไม่มีประวัติการเข้าสู่ระบบ</p>
+        </div>
+      } @else {
+        <div class="history-list">
+          @for (entry of recentHistory(); track $index) {
+            <div class="history-row" [class.active-session]="!entry.logoutAt">
+              <div class="history-avatar" [style.--role-c]="roleColors[entry.role]">
+                <mat-icon>{{ roleIcons[entry.role] }}</mat-icon>
+              </div>
+              <div class="history-info">
+                <div class="history-user">
+                  <span class="h-name">{{ entry.fullName }}</span>
+                  <span class="h-username">&#64;{{ entry.username }}</span>
+                  <span class="h-role-badge" [style.color]="roleColors[entry.role]">{{ roleLabels[entry.role] }}</span>
+                </div>
+                <div class="history-times">
+                  <span><mat-icon>login</mat-icon> {{ formatDate(entry.loginAt) }}</span>
+                  @if (entry.logoutAt) {
+                    <span><mat-icon>logout</mat-icon> {{ formatDate(entry.logoutAt) }}</span>
+                    <span class="duration"><mat-icon>timer</mat-icon> {{ getDuration(entry) }}</span>
+                  }
+                </div>
+              </div>
+              @if (!entry.logoutAt) {
+                <div class="online-dot" matTooltip="กำลังใช้งาน">
+                  <span></span> ออนไลน์
+                </div>
+              }
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
+
+</div>
+
+<!-- ── Delete Confirm Modal ── -->
+@if (confirmDeleteId()) {
+  <div class="modal-overlay" (click)="cancelDelete()">
+    <div class="modal-box" (click)="$event.stopPropagation()">
+      <div class="modal-icon">
+        <mat-icon>warning_amber</mat-icon>
+      </div>
+      <h3>ยืนยันการลบผู้ใช้</h3>
+      @if (getDeleteTarget(); as u) {
+        <p>คุณต้องการลบ <strong>{{ u.fullName }}</strong> (&#64;{{ u.username }}) ออกจากระบบใช่หรือไม่?</p>
+      }
+      <p class="warn-text">การกระทำนี้ไม่สามารถย้อนกลับได้</p>
+      <div class="modal-actions">
+        <button class="btn-cancel" (click)="cancelDelete()">ยกเลิก</button>
+        <button class="btn-confirm-delete" (click)="confirmDelete()">
+          <mat-icon>delete</mat-icon> ยืนยันลบ
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- ── Detail Drawer ── -->
+@if (selectedUserDetails(); as detail) {
+  <div class="drawer-overlay" (click)="closeDetail()">
+    <div class="detail-drawer" (click)="$event.stopPropagation()">
+      <div class="drawer-header">
+        <div class="header-main">
+          <div class="user-avatar-large" [style.--role-c]="roleColors[detail.user.role]">
+            <mat-icon>{{ roleIcons[detail.user.role] }}</mat-icon>
+          </div>
+          <div class="drawer-title-area">
+            <h2>{{ detail.user.fullName }}</h2>
+            <p>&#64;{{ detail.user.username }}</p>
+            <span class="role-badge" [style.color]="roleColors[detail.user.role]" 
+                  [style.background]="'color-mix(in srgb,' + roleColors[detail.user.role] + ' 15%, transparent)'">
+              {{ roleLabels[detail.user.role] }}
+            </span>
+          </div>
+        </div>
+        <button class="btn-close" (click)="closeDetail()"><mat-icon>close</mat-icon></button>
+      </div>
+
+      <div class="drawer-content">
+        <!-- general info -->
+        <div class="detail-section">
+          <h3 class="section-title"><mat-icon>contact_mail</mat-icon> ข้อมูลทั่วไป</h3>
+          <div class="info-list">
+            <div class="info-item">
+              <span class="lbl"><mat-icon>mail_outline</mat-icon>อีเมล</span>
+              <span class="val">{{ detail.user.email || 'ไม่ระบุ' }}</span>
+            </div>
+            <div class="info-item">
+              <span class="lbl"><mat-icon>phone</mat-icon>เบอร์โทร</span>
+              <span class="val">{{ detail.user.phone || 'ไม่ระบุ' }}</span>
+            </div>
+            <div class="info-item">
+              <span class="lbl"><mat-icon>calendar_today</mat-icon>วันที่สมัคร</span>
+              <span class="val">{{ formatDateOnly(detail.user.createdAt) }}</span>
+            </div>
+            <div class="info-item">
+              <span class="lbl"><mat-icon>login</mat-icon>เข้าสู่ระบบล่าสุด</span>
+              <span class="val">{{ formatDate(detail.user.lastLoginAt) }} <span class="login-count">(รวม {{ detail.user.loginCount ?? 0 }} ครั้ง)</span></span>
+            </div>
+          </div>
+        </div>
+
+        @if (detail.user.role === 'owner') {
+          <div class="detail-section">
+            <div class="section-top">
+              <h3 class="section-title"><mat-icon>pets</mat-icon> สัตว์เลี้ยง ({{ detail.petsOwned.length }})</h3>
+            </div>
+            
+            @if (detail.petsOwned.length === 0) {
+               <div class="empty-pets">
+                 <mat-icon>sentiment_dissatisfied</mat-icon>
+                 <p>ยังไม่มีข้อมูลสัตว์เลี้ยง</p>
+               </div>
+            } @else {
+               <div class="pets-list">
+                 @for (pet of detail.petsOwned; track pet.id) {
+                   <div class="pet-card">
+                     <div class="pet-head">
+                       <div class="pet-avatar" [style.color]="'var(--role-c)'">
+                         <mat-icon>{{ pet.species | speciesIcon }}</mat-icon>
+                       </div>
+                       <div class="pet-name-wrap">
+                         <span class="pet-name">{{ pet.name }}</span>
+                         <span class="pet-spec">{{ pet.breed || pet.species }} • {{ pet.sex === 'Male' ? 'ตัวผู้' : pet.sex === 'Female' ? 'ตัวเมีย' : 'ไม่ระบุ' }}</span>
+                       </div>
+                     </div>
+                     
+                     <div class="pet-records-wrap">
+                       <span class="rec-title"><mat-icon>history</mat-icon> ประวัติการรักษา ({{ pet.recordCount }} ครั้ง)</span>
+                       @if (pet.records.length > 0) {
+                          <div class="pet-records" (click)="$event.stopPropagation()">
+                            @for (rec of pet.records; track rec.id) {
+                              <div class="record-item">
+                                  <span class="rec-date">{{ formatDateOnly(rec.date) }}</span>
+                                  <span class="rec-desc">{{ rec.assessment || 'ตรวจสุขภาพทั่วไป' }}</span>
+                              </div>
+                            }
+                          </div>
+                       } @else {
+                          <div class="no-records">ไม่เคยมีประวัติการรักษา</div>
+                       }
+                     </div>
+                   </div>
+                 }
+               </div>
+            }
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+}

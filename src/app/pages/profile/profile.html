@@ -1,0 +1,121 @@
+<div class="impeccable-page">
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-titles">
+      <h1>โปรไฟล์ส่วนตัว (Profile & Settings)</h1>
+      <p class="subtitle">จัดการข้อมูลบัญชีผู้ใช้งาน และตั้งค่าระบบ</p>
+    </div>
+    <div class="header-actions">
+      <button mat-raised-button color="primary" class="rounded-btn" (click)="handleAction('เปิดหน้าตั้งค่าระบบ')">
+        <mat-icon>settings</mat-icon>
+        <span>การตั้งค่า</span>
+      </button>
+    </div>
+  </div>
+
+  @if (auth.currentUser(); as user) {
+    <div class="profile-layout">
+      
+      <!-- Left Column: Identity Box -->
+      <div class="profile-identity-col">
+        <div class="premium-profile-card glass-panel">
+          <div class="profile-cover">
+             <div class="mesh-gradient bg-primary"></div>
+          </div>
+          
+          <div class="profile-avatar-container">
+            <div class="profile-avatar">
+              <mat-icon>{{ user.role | roleLabel:'icon' }}</mat-icon>
+            </div>
+          </div>
+          
+          <div class="profile-meta">
+            <h2 class="profile-name">{{ user.fullName }}</h2>
+            <div class="profile-role-badge" [ngClass]="user.role.toLowerCase()">
+               {{ user.role | roleLabel }}
+            </div>
+            <p class="profile-username">@{{ user.username }}</p>
+          </div>
+          
+          <div class="profile-stats">
+            <div class="stat-col">
+              <span class="stat-num">5.0</span>
+              <span class="stat-lbl">เรตติ้ง</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-col">
+              <span class="stat-num">1</span>
+              <span class="stat-lbl">อุปกรณ์</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-col">
+              <span class="stat-num"><mat-icon class="text-green">verified</mat-icon></span>
+              <span class="stat-lbl">สถานะ</span>
+            </div>
+          </div>
+          
+          <div class="profile-actions">
+            <button mat-raised-button color="primary" class="edit-btn" (click)="handleAction('แก้ไขข้อมูลโปรไฟล์')">แก้ไขโปรไฟล์</button>
+            <button mat-icon-button class="share-btn" matTooltip="แชร์ลิงก์โปรไฟล์" (click)="handleAction('คัดลอกลิงก์โปรไฟล์')">
+              <mat-icon>share</mat-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Right Column: Details & Settings -->
+      <div class="profile-details-col">
+        <div class="settings-group glass-panel">
+          <h3 class="group-title">ข้อมูลบัญชีผู้ใช้ (Account Details)</h3>
+          
+          <div class="setting-row">
+            <div class="setting-icon"><mat-icon>person</mat-icon></div>
+            <div class="setting-content">
+              <div class="setting-lbl">ชื่อผู้ใช้งานระบบ (Username)</div>
+              <div class="setting-val">{{ user.username }}</div>
+            </div>
+            <button mat-icon-button class="text-muted" (click)="handleAction('คัดลอก Username')"><mat-icon>content_copy</mat-icon></button>
+          </div>
+          
+          <div class="setting-row">
+            <div class="setting-icon text-blue"><mat-icon>badge</mat-icon></div>
+            <div class="setting-content">
+              <div class="setting-lbl">ระดับสิทธิ์ (Role & Permissions)</div>
+              <div class="setting-val">{{ user.role | roleLabel }} (ได้รับสิทธิ์แล้ว)</div>
+            </div>
+            <mat-icon class="chevron">chevron_right</mat-icon>
+          </div>
+          
+          <div class="setting-row">
+            <div class="setting-icon text-green"><mat-icon>event</mat-icon></div>
+            <div class="setting-content">
+              <div class="setting-lbl">วันที่สร้างบัญชี (Member Since)</div>
+              <div class="setting-val">{{ user.createdAt | date:'longDate' }}</div>
+            </div>
+            <mat-icon class="chevron">chevron_right</mat-icon>
+          </div>
+        </div>
+        
+        <div class="settings-group glass-panel danger-group">
+          <h3 class="group-title text-red">จัดการบัญชี (Account Management)</h3>
+          
+          <div class="setting-row danger-row" (click)="auth.logout()">
+            <div class="setting-icon text-red"><mat-icon>logout</mat-icon></div>
+            <div class="setting-content">
+              <div class="setting-lbl text-red font-bold">ออกจากระบบ (Log Out)</div>
+              <div class="setting-val text-red">ยุติเซสชั่นการทำงานปัจจุบันบนอุปกรณ์นี้</div>
+            </div>
+          </div>
+          
+          <div class="setting-row danger-row" (click)="handleAction('ขอลบบัญชีผู้ใช้')">
+            <div class="setting-icon text-red opacity-50"><mat-icon>person_remove</mat-icon></div>
+            <div class="setting-content">
+              <div class="setting-lbl text-red opacity-70">ลบบัญชีผู้ใช้งาน (Delete Account)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+  }
+</div>

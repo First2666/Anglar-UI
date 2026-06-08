@@ -1,0 +1,431 @@
+<div class="impeccable-page">
+  <!-- Header -->
+  <div class="page-header animate-fade-up">
+    <div class="header-titles">
+      <h1>
+        @if (isOwner()) {
+        ตารางนัดหมายของคุณ
+        } @else {
+        จัดการนัดหมาย
+        }
+      </h1>
+      <p class="subtitle">ตรวจสอบและจัดการเวลานัดหมายล่วงหน้า</p>
+    </div>
+    <div class="header-actions">
+      <button mat-raised-button color="primary" class="rounded-btn" (click)="startCreate()">
+        <mat-icon>add</mat-icon>
+        <span>นัดหมายใหม่</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Stats Overview -->
+  <div class="stats-overview animate-fade-up stagger-1">
+    <div class="stat-card total">
+      <div class="stat-icon"><mat-icon>calendar_month</mat-icon></div>
+      <div class="stat-data">
+        <span class="stat-value">{{ stats().total }}</span>
+        <span class="stat-label">นัดหมายทั้งหมด</span>
+      </div>
+    </div>
+    <div class="stat-card today">
+      <div class="stat-icon"><mat-icon>today</mat-icon></div>
+      <div class="stat-data">
+        <span class="stat-value">{{ stats().todayCount }}</span>
+        <span class="stat-label">คิววันนี้</span>
+      </div>
+    </div>
+    <div class="stat-card upcoming">
+      <div class="stat-icon"><mat-icon>schedule</mat-icon></div>
+      <div class="stat-data">
+        <span class="stat-value">{{ stats().upcomingCount }}</span>
+        <span class="stat-label">รอพบแพทย์</span>
+      </div>
+    </div>
+    <div class="stat-card completed">
+      <div class="stat-icon"><mat-icon>task_alt</mat-icon></div>
+      <div class="stat-data">
+        <span class="stat-value">{{ stats().completedCount }}</span>
+        <span class="stat-label">เสร็จสิ้นแล้ว</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filter & Search Toolbar -->
+  <div class="filter-toolbar animate-fade-up stagger-2">
+    <div class="search-box">
+      <mat-icon>search</mat-icon>
+      <input type="text" [value]="searchQuery()" (input)="searchQuery.set($any($event.target).value)"
+        placeholder="ค้นหาสัตว์เลี้ยง, เจ้าของ, อาการ..." />
+    </div>
+
+    <div class="filter-pills">
+      @for (sf of filterOptions; track sf) {
+      <button class="pill" [class.active]="statusFilter() === sf" (click)="statusFilter.set(sf)">
+        {{ statusThai(sf) }}
+      </button>
+      }
+    </div>
+  </div>
+
+  <!-- Booking Form (Bento Style in Dialog) -->
+  <ng-template #formDialog>
+    <div class="dialog-container">
+      <div class="form-header">
+        <h2>{{ editingId() ? 'แก้ไขข้อมูลนัดหมาย' : 'สร้างนัดหมายใหม่' }}</h2>
+        <button mat-icon-button class="close-btn" (click)="closeForm()"><mat-icon>close</mat-icon></button>
+      </div>
+
+      <!-- Stepper -->
+      <div class="premium-stepper">
+        <div class="step" [class.active]="step() === 1" (click)="goToStep(1)">
+          <div class="step-num">1</div>
+          <span class="step-label">ข้อมูลสัตว์</span>
+        </div>
+        <div class="step-divider"></div>
+        <div class="step" [class.active]="step() === 2" (click)="form.controls.petId.valid ? goToStep(2) : null"
+          [class.disabled]="!form.controls.petId.valid">
+          <div class="step-num">2</div>
+          <span class="step-label">เลือกเวลา</span>
+        </div>
+        <div class="step-divider"></div>
+        <div class="step" [class.active]="step() === 3">
+          <div class="step-num">3</div>
+          <span class="step-label">ยืนยัน</span>
+        </div>
+      </div>
+
+      <div class="form-body">
+        <form class="bento-form" [formGroup]="form" (ngSubmit)="save()">
+
+          <!-- STEP 1: PET & REASON -->
+          @if (step() === 1) {
+          <div class="form-grid">
+            @if (!isOwner()) {
+            <mat-form-field appearance="outline" class="col-span-full">
+              <mat-label>เจ้าของสัตว์</mat-label>
+              <mat-select formControlName="ownerId">
+                @for (o of owners(); track o.id) {
+                <mat-option [value]="o.id">{{ o.fullName }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+            }
+
+            <mat-form-field appearance="outline">
+              <mat-label>สัตว์เลี้ยงที่จะพาไปตรวจ</mat-label>
+              <mat-select formControlName="petId">
+                @for (p of petsForSelectedOwner(); track p.id) {
+                <mat-option [value]="p.id">{{ p.name }}</mat-option>
+                }
+              </mat-select>
+              @if (form.controls.petId.touched && form.controls.petId.invalid) {
+              <mat-error>กรุณาเลือกสัตว์เลี้ยง</mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>เลือกสัตวแพทย์</mat-label>
+              <mat-select formControlName="vetId">
+                <mat-option value="">— ไม่ระบุหมอ (หมอท่านใดก็ได้) —</mat-option>
+                @for (v of availableVets(); track v.id) {
+                <mat-option [value]="v.id">{{ v.fullName }} ({{ v.specialty }})</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>เหตุผลที่เข้าพบ</mat-label>
+              <mat-select formControlName="reason">
+                @for (r of reasonOptions; track r) {
+                <mat-option [value]="r">{{ reasonThai(r) }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="col-span-full">
+              <mat-label>อาการ / รายละเอียดเพิ่มเติม</mat-label>
+              <input matInput formControlName="reasonDetails" placeholder="เช่น สัตว์เลี้ยงไม่กินอาหาร, ตรวจประจำปี" />
+            </mat-form-field>
+          </div>
+
+          <div class="form-actions">
+            <button mat-raised-button color="primary" class="rounded-btn" type="button" (click)="nextStep()">
+              ขั้นตอนถัดไป <mat-icon>arrow_forward</mat-icon>
+            </button>
+          </div>
+          }
+
+          <!-- STEP 2: DATE & TIME -->
+          @if (step() === 2) {
+          <div class="form-grid">
+            <mat-form-field appearance="outline" class="col-span-full">
+              <mat-label>เลือกวันที่</mat-label>
+              <input matInput [matDatepicker]="picker" formControlName="date" (click)="picker.open()" />
+              <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+              <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field>
+
+            <div class="time-picker-premium col-span-full">
+              <div class="picker-label">
+                <mat-icon>schedule</mat-icon>
+                <span>ช่วงเวลาที่ต้องการ</span>
+              </div>
+
+              <div class="period-toggle">
+                <button type="button" class="period-btn" [class.active]="selectedPeriod() === 'morning'"
+                  (click)="selectedPeriod.set('morning')">
+                  <mat-icon>wb_sunny</mat-icon>
+                  <span>ช่วงเช้า</span>
+                  <small>{{ categorizedSlots().morning.length }} คิวว่าง</small>
+                </button>
+                <button type="button" class="period-btn" [class.active]="selectedPeriod() === 'afternoon'"
+                  (click)="selectedPeriod.set('afternoon')">
+                  <mat-icon>light_mode</mat-icon>
+                  <span>ช่วงบ่าย</span>
+                  <small>{{ categorizedSlots().afternoon.length }} คิวว่าง</small>
+                </button>
+                <button type="button" class="period-btn" [class.active]="selectedPeriod() === 'evening'"
+                  (click)="selectedPeriod.set('evening')">
+                  <mat-icon>dark_mode</mat-icon>
+                  <span>ช่วงเย็น</span>
+                  <small>{{ categorizedSlots().evening.length }} คิวว่าง</small>
+                </button>
+              </div>
+
+              <div class="slots-viewport">
+                <div class="slot-grid-compact">
+                  @for (slot of currentPeriodSlots(); track slot) {
+                  <div class="time-chip" [class.selected]="form.controls.timeSlot.value === slot"
+                    (click)="form.controls.timeSlot.setValue(slot); form.controls.timeSlot.markAsTouched()">
+                    {{ slot }}
+                  </div>
+                  }
+                  @if (currentPeriodSlots().length === 0) {
+                  <div class="empty-period">
+                    <mat-icon>event_busy</mat-icon>
+                    <span>ไม่มีคิวว่างในช่วงเวลานี้</span>
+                  </div>
+                  }
+                </div>
+              </div>
+
+              @if (form.controls.timeSlot.touched && form.controls.timeSlot.invalid) {
+              <div class="error-msg-premium">
+                <mat-icon>error_outline</mat-icon>
+                <span>กรุณาเลือกช่วงเวลาเพื่อดำเนินการต่อ</span>
+              </div>
+              }
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button mat-button type="button" class="cancel-btn" (click)="prevStep()">ย้อนกลับ</button>
+            <button mat-raised-button color="primary" class="rounded-btn" type="button" (click)="nextStep()">
+              ตรวจสอบข้อมูล <mat-icon>arrow_forward</mat-icon>
+            </button>
+          </div>
+          }
+
+          <!-- STEP 3: CONFIRM -->
+          @if (step() === 3) {
+          <div class="summary-box">
+            <div class="summary-item">
+              <span class="lbl">สัตว์เลี้ยง</span>
+              <span class="val">{{ petName(form.controls.petId.value) }}</span>
+            </div>
+            <div class="summary-item">
+              <span class="lbl">สัตวแพทย์</span>
+              <span class="val">{{ vetName(form.controls.vetId.value) }}</span>
+            </div>
+            <div class="summary-item highlight">
+              <span class="lbl">วันเวลานัด</span>
+              <span class="val">{{ form.controls.date.value }} เวลา {{ form.controls.timeSlot.value }}</span>
+            </div>
+            <div class="summary-item">
+              <span class="lbl">รายละเอียดอาการ</span>
+              <span class="val">{{ reasonThai(form.controls.reason.value) }}</span>
+            </div>
+          </div>
+
+          @if (!isOwner()) {
+          <div class="staff-overrides">
+            <h4>สำหรับเจ้าหน้าที่</h4>
+            <div class="form-grid">
+              <mat-form-field appearance="outline">
+                <mat-label>สถานะ</mat-label>
+                <mat-select formControlName="status">
+                  @for (s of statusOptions; track s) {
+                  <mat-option [value]="s">{{ statusThai(s) }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>โน๊ตภายใน</mat-label>
+                <input matInput formControlName="notes" placeholder="เช่น ลูกค้าขอเลื่อน" />
+              </mat-form-field>
+            </div>
+          </div>
+          }
+
+          <div class="form-actions">
+            <button mat-button type="button" class="cancel-btn" (click)="prevStep()">ย้อนกลับ</button>
+            <button mat-raised-button color="primary" class="rounded-btn" type="submit">
+              <mat-icon>check_circle</mat-icon> {{ editingId() ? 'อัปเดตตารางคิว' : 'ยืนยันการล็อกคิว' }}
+            </button>
+          </div>
+          }
+
+        </form>
+      </div>
+    </div>
+  </ng-template>
+
+  <!-- Billing Dialog -->
+  <ng-template #billingDialog>
+    <div class="dialog-container">
+      <div class="form-header">
+        <h2>สรุปค่าใช้จ่าย</h2>
+        <button mat-icon-button class="close-btn" (click)="closeBilling()"><mat-icon>close</mat-icon></button>
+      </div>
+
+      <div class="form-body" style="padding-top: 20px;">
+        <div class="bento-form">
+          <p class="subtitle" style="margin-bottom: 16px;">กรอกรายละเอียดค่าใช้จ่ายสำหรับการรักษานี้</p>
+          
+          <div class="bill-items-list">
+            @for (item of billItems(); track item.id; let idx = $index) {
+              <div class="bill-item-row" style="display: flex; gap: 12px; margin-bottom: 12px; align-items: center;">
+                <mat-form-field appearance="outline" style="flex: 2; margin-bottom: -1.25em;">
+                  <mat-label>รายการ</mat-label>
+                  <input matInput [value]="item.name" (input)="updateBillItem(idx, 'name', $event)" placeholder="เช่น ค่ายา, ค่าตรวจ" />
+                </mat-form-field>
+                <mat-form-field appearance="outline" style="flex: 1; margin-bottom: -1.25em;">
+                  <mat-label>ราคา (บาท)</mat-label>
+                  <input matInput type="number" min="0" [value]="item.price" (input)="updateBillItem(idx, 'price', $event)" />
+                </mat-form-field>
+                <button mat-icon-button color="warn" (click)="removeBillItem(idx)" matTooltip="ลบรายการนี้" style="margin-top: -1.25em;">
+                  <mat-icon>remove_circle_outline</mat-icon>
+                </button>
+              </div>
+            }
+          </div>
+
+          <button mat-stroked-button color="primary" (click)="addBillItem()" style="margin-bottom: 24px; border-radius: 12px;">
+            <mat-icon>add</mat-icon> เพิ่มรายการ
+          </button>
+
+          <div class="bill-total-row" style="display: flex; justify-content: space-between; align-items: center; padding: 16px; background: rgba(var(--primary-rgb), 0.05); border-radius: 12px; margin-bottom: 24px;">
+            <span style="font-weight: 600; font-size: 16px;">ยอดรวมทั้งหมด</span>
+            <span style="font-size: 24px; font-weight: 700; color: var(--primary);">฿{{ billTotal() | number }}</span>
+          </div>
+
+          <div class="form-actions">
+            <button mat-button type="button" class="cancel-btn" (click)="closeBilling()">ยกเลิก</button>
+            <button mat-raised-button color="primary" class="rounded-btn" (click)="saveBilling()" [disabled]="billItems().length === 0 || billTotal() <= 0">
+              <mat-icon>send</mat-icon> ส่งใบแจ้งหนี้ให้ลูกค้า
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+
+  <!-- Appointments Grid -->
+  <div class="appointment-grid">
+    @for (a of filteredAppointments(); track a.id; let i = $index) {
+    <div [class]="'appt-card-v2 animate-fade-up status-' + a.status" (click)="canEditRow(a) ? startEdit(a.id) : null"
+      [style.animation-delay]="(i * 50 + 300) + 'ms'">
+
+      <div class="ac-top">
+        <div class="ac-datetime">
+          <div class="ac-date">
+            <mat-icon>event</mat-icon> {{ formatWhen(a.startAt).split(' ')[0] }}
+          </div>
+          <div class="ac-time">
+            <mat-icon>schedule</mat-icon> {{ formatWhen(a.startAt).split(' ')[1] || '00:00' }}
+          </div>
+          @if (getQueueNumber(a.id)) {
+            <span class="ac-queue-badge" style="background: rgba(var(--primary-rgb), 0.1); color: var(--primary); padding: 2px 8px; border-radius: 6px; font-size: 13px; font-weight: 700; margin-left: 8px;">
+              คิวที่ {{ getQueueNumber(a.id) }}
+            </span>
+          }
+        </div>
+        <span [class]="'ac-status-badge ' + a.status">{{ statusThai(a.status) }}</span>
+      </div>
+
+      <div class="ac-body">
+        <div class="ac-pet-info">
+          <div class="ac-avatar"><mat-icon>pets</mat-icon></div>
+          <div class="ac-details">
+            <h3>{{ petName(a.petId) }}</h3>
+            <span class="ac-owner"><mat-icon>person</mat-icon> {{ ownerName(a.ownerId) }}</span>
+          </div>
+        </div>
+        <div class="ac-reason-box">
+          <span class="reason-label">เหตุผลที่เข้าพบ:</span>
+          <p>{{ reasonThai(a.reason) }} {{ a.reasonDetails ? '(' + a.reasonDetails + ')' : '' }}</p>
+        </div>
+      </div>
+
+      <!-- PENDING APPROVAL BANNER for staff -->
+      @if (!isOwner() && a.status === 'Pending') {
+      <div class="approve-banner" (click)="$event.stopPropagation()">
+        <div class="approve-banner-info">
+          <mat-icon>hourglass_empty</mat-icon>
+          <span>รอการอนุมัติ — ลูกค้ากำลังรอการยืนยัน</span>
+        </div>
+        <button class="approve-full-btn" (click)="approveAppointment(a.id)" matTooltip="อนุมัติและยืนยันนัดหมาย">
+          <mat-icon>check_circle</mat-icon>
+          อนุมัติ
+        </button>
+      </div>
+      }
+
+      <div class="ac-footer">
+        <div class="ac-vet">
+          <mat-icon>medical_services</mat-icon> {{ vetName(a.vetId || '') }}
+        </div>
+        <div class="ac-actions" (click)="$event.stopPropagation()">
+          @if (!isOwner() && (a.status === 'Scheduled' || a.status === 'CheckedIn')) {
+          <button class="icon-btn treatment" (click)="startTreatment(a.id)" matTooltip="เริ่มการรักษา" style="color: #6366f1; background: rgba(99, 102, 241, 0.1);">
+            <mat-icon>medical_services</mat-icon>
+          </button>
+          }
+          @if ((a.status === 'Scheduled' || a.status === 'Pending') && (isOwner() || canEditRow(a))) {
+          <button class="icon-btn cancel" (click)="canCancelRow(a) ? cancelAppointment(a.id) : null"
+            matTooltip="ยกเลิกนัดหมาย">
+            <mat-icon>cancel</mat-icon>
+          </button>
+          } @else if (canDelete()) {
+          <button class="icon-btn delete" (click)="remove(a.id)" matTooltip="ลบข้อมูล">
+            <mat-icon>delete_outline</mat-icon>
+          </button>
+          }
+          @if (canEditRow(a)) {
+          <button class="icon-btn edit" (click)="startEdit(a.id)" matTooltip="แก้ไขข้อมูล">
+            <mat-icon>edit</mat-icon>
+          </button>
+          }
+          @if (!isOwner() && (a.status === 'Completed' || a.status === 'CheckedIn' || a.status === 'InSession')) {
+          <button class="icon-btn billing-btn" (click)="openBilling(a.id)" matTooltip="คิดเงิน / ออกใบแจ้งหนี้"
+            style="color: var(--primary); background: rgba(var(--primary-rgb), 0.1);">
+            <mat-icon>request_quote</mat-icon>
+          </button>
+          }
+        </div>
+      </div>
+    </div>
+    }
+
+    @if (filteredAppointments().length === 0) {
+    <div class="empty-state col-span-full">
+      <div class="empty-icon">
+        <mat-icon>event_busy</mat-icon>
+      </div>
+      <h3>ไม่พบการนัดหมาย</h3>
+      <p>ไม่มีข้อมูลนัดหมายที่ตรงกับเงื่อนไข หรือยังไม่มีการจองคิว</p>
+    </div>
+    }
+  </div>
+</div>

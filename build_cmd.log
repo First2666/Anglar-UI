@@ -1,0 +1,36 @@
+
+> pet-clinic@0.0.0 build
+> ng build
+
+[33m❯[39m Building...
+[32m✔[39m Building...
+Application bundle generation failed. [3.202 seconds] - 2026-03-24T16:39:14.769Z
+
+[1m[31m[31mX [41;31m[[41;97mERROR[41;31m][0m [1mAngular compilation emit failed.[0m [1m[35m[plugin angular-compiler][0m
+
+  Error: Unexpected global target 'click' defined for 'stop' event. Supported list of global targets: window,document,body.
+      at reifyCreateOperations (file:///C:/ag/pet-clinic/node_modules/@angular/compiler/fesm2022/compiler.mjs:20042:17)
+      at Object.reify [as fn] (file:///C:/ag/pet-clinic/node_modules/@angular/compiler/fesm2022/compiler.mjs:19961:5)
+      at transform (file:///C:/ag/pet-clinic/node_modules/@angular/compiler/fesm2022/compiler.mjs:22038:13)
+      at compileComponentFromMetadata (file:///C:/ag/pet-clinic/node_modules/@angular/compiler/fesm2022/compiler.mjs:25177:3)
+      at ComponentDecoratorHandler.compileFull (file:///C:/ag/pet-clinic/node_modules/@angular/compiler-cli/bundles/chunk-IG22BDVK.js:21803:17)
+      at TraitCompiler.compile (file:///C:/ag/pet-clinic/node_modules/@angular/compiler-cli/bundles/chunk-IG22BDVK.js:6432:38)
+      at IvyCompilationVisitor.visitClassDeclaration (file:///C:/ag/pet-clinic/node_modules/@angular/compiler-cli/bundles/chunk-IG22BDVK.js:6732:37)
+      at file:///C:/ag/pet-clinic/node_modules/@angular/compiler-cli/bundles/chunk-IG22BDVK.js:6676:68
+      at IvyCompilationVisitor._visitListEntryNode (file:///C:/ag/pet-clinic/node_modules/@angular/compiler-cli/bundles/chunk-IG22BDVK.js:6654:20)
+      at IvyCompilationVisitor._visit (file:///C:/ag/pet-clinic/node_modules/@angular/compiler-cli/bundles/chunk-IG22BDVK.js:6676:26)
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'src' does not exist on type 'AdminRoomDialog'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/boarding/admin-room-dialog/admin-room-dialog.html:43:80:
+[37m      43 │ ...="Room Preview" (error)="this.[32msrc[37m='https://images.unsplash.com/...
+         ╵                                  [32m~~~[0m
+
+  Error occurs in the template of component AdminRoomDialog.
+
+    src/app/pages/boarding/admin-room-dialog/admin-room-dialog.ts:26:15:
+[37m      26 │   templateUrl: [32m'./admin-room-dialog.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+[39m[22m

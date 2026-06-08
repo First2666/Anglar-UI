@@ -1,0 +1,327 @@
+<div class="mr-page">
+
+  <!-- === PAGE HEADER === -->
+  <div class="mr-hero">
+    <div class="hero-content">
+      <div class="hero-badge"><mat-icon>folder_open</mat-icon> ประวัติการรักษา</div>
+      <h1 class="hero-title">ระบบบันทึกการรักษา</h1>
+      <p class="hero-sub">บันทึกผลการตรวจวินิจฉัยและค่าบริการการรักษา</p>
+    </div>
+    <div class="hero-cta">
+      <button class="cta-btn" (click)="startCreate()">
+        <mat-icon>add</mat-icon>
+        <span>เพิ่มบันทึกใหม่</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- === FORM DIALOG === -->
+  <ng-template #formDialog>
+    <div class="soap-dialog">
+      <!-- Header -->
+      <div class="soap-dialog-header">
+        <div class="sdh-left">
+          <div class="sdh-icon">
+            <mat-icon>{{ editingId() ? 'edit' : 'add' }}</mat-icon>
+          </div>
+          <div>
+            <h2>{{ editingId() ? 'แก้ไขบันทึกการรักษา' : 'บันทึกการรักษาใหม่' }}</h2>
+            <p>{{ linkedAppt() ? 'เปิดจากการนัดหมาย — ข้อมูลผู้ป่วยถูกกรอกอัตโนมัติ' : 'กรอกข้อมูลให้ครบถ้วนทุกส่วน' }}</p>
+          </div>
+        </div>
+        <button class="sdh-close" type="button" (click)="closeForm()"><mat-icon>close</mat-icon></button>
+      </div>
+
+      <form [formGroup]="form" (ngSubmit)="save()" class="soap-form">
+        <div class="soap-form-content">
+          <!-- Patient Context Card -->
+          @if (linkedAppt()) {
+            <div class="patient-context-card">
+              <div class="pcc-header"><mat-icon>assignment_ind</mat-icon> <span>ข้อมูลผู้ป่วยจากการนัดหมาย</span></div>
+              <div class="pcc-body">
+                <div class="pcc-item"><span class="pcc-label">สัตว์เลี้ยง</span><span class="pcc-value">{{ linkedAppt()!.petName }}</span></div>
+                <div class="pcc-item"><span class="pcc-label">เจ้าของ</span><span class="pcc-value">{{ linkedAppt()!.ownerName }}</span></div>
+                <div class="pcc-item"><span class="pcc-label">สัตวแพทย์</span><span class="pcc-value">{{ linkedAppt()!.vetName }}</span></div>
+                <div class="pcc-item" style="flex: 2;"><span class="pcc-label">เหตุผลที่มา</span><span class="pcc-value">{{ linkedAppt()!.reason }}</span></div>
+              </div>
+            </div>
+          }
+
+          <!-- Section 1 -->
+          @if (!linkedAppt()) {
+            <div class="soap-section">
+              <div class="section-label">
+                <span class="section-num">1</span>
+                <div>
+                  <h3>ข้อมูลพื้นฐาน</h3>
+                  <p>เลือกสัตว์เลี้ยงและสัตวแพทย์</p>
+                </div>
+              </div>
+              <div class="patient-grid">
+                <mat-form-field appearance="outline">
+                  <mat-label>เจ้าของสัตว์ *</mat-label>
+                  <mat-select formControlName="ownerId">
+                    @for (o of owners(); track o.id) { <mat-option [value]="o.id">{{ o.fullName }}</mat-option> }
+                  </mat-select>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                  <mat-label>สัตว์เลี้ยง *</mat-label>
+                  <mat-select formControlName="petId">
+                    @for (p of petsForOwner(); track p.id) { <mat-option [value]="p.id">{{ p.name }}</mat-option> }
+                  </mat-select>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                  <mat-label>สัตวแพทย์ผู้รักษา</mat-label>
+                  <mat-select formControlName="vetId">
+                    <mat-option value="">— ไม่ระบุ —</mat-option>
+                    @for (v of vets(); track v.id) { <mat-option [value]="v.id">{{ v.fullName }}</mat-option> }
+                  </mat-select>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                  <mat-label>วันที่ทำการรักษา *</mat-label>
+                  <input matInput [matDatepicker]="picker" formControlName="date" (click)="picker.open()" readonly />
+                  <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                  <mat-datepicker #picker></mat-datepicker>
+                </mat-form-field>
+              </div>
+            </div>
+          } @else {
+            <div class="soap-section" style="padding: 16px 24px;">
+              <mat-form-field appearance="outline" style="width: 200px; margin: 0;">
+                <mat-label>วันที่ทำการรักษา *</mat-label>
+                <input matInput [matDatepicker]="picker2" formControlName="date" (click)="picker2.open()" readonly />
+                <mat-datepicker-toggle matIconSuffix [for]="picker2"></mat-datepicker-toggle>
+                <mat-datepicker #picker2></mat-datepicker>
+              </mat-form-field>
+            </div>
+          }
+
+          <!-- Section 2: Vitals -->
+          <div class="soap-section">
+            <div class="section-label">
+              <span class="section-num">2</span>
+              <div>
+                <h3>สัญญาณชีพ (Vitals)</h3>
+                <p>กรอกเฉพาะที่วัดได้จริง</p>
+              </div>
+            </div>
+            <div class="vitals-grid">
+              <div class="vital-input-card">
+                <label><mat-icon>scale</mat-icon> น้ำหนัก</label>
+                <div class="vic-input-row">
+                  <input type="number" step="0.1" min="0" formControlName="weight" placeholder="0.0" />
+                  <span class="vic-unit">กก.</span>
+                </div>
+              </div>
+              <div class="vital-input-card">
+                <label><mat-icon>device_thermostat</mat-icon> อุณหภูมิ</label>
+                <div class="vic-input-row">
+                  <input type="number" step="0.1" formControlName="temperature" placeholder="38.5" />
+                  <span class="vic-unit">°C</span>
+                </div>
+              </div>
+              <div class="vital-input-card">
+                <label><mat-icon>monitor_heart</mat-icon> ชีพจร (HR)</label>
+                <div class="vic-input-row">
+                  <input type="number" step="1" formControlName="heartRate" placeholder="80" />
+                  <span class="vic-unit">bpm</span>
+                </div>
+              </div>
+              <div class="vital-input-card">
+                <label><mat-icon>air</mat-icon> หายใจ (RR)</label>
+                <div class="vic-input-row">
+                  <input type="number" step="1" formControlName="respiratoryRate" placeholder="20" />
+                  <span class="vic-unit">ครั้ง/นาที</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 3: SOAP Notes -->
+          <div class="soap-section">
+            <div class="section-label">
+              <span class="section-num">3</span>
+              <div>
+                <h3>บันทึกการตรวจ (SOAP)</h3>
+              </div>
+            </div>
+            <div class="soap-notes-grid">
+              <div class="soap-note-card">
+                <div class="snc-header">
+                  <div class="snc-badge">S</div>
+                  <h4>Subjective <span>— อาการที่เจ้าของแจ้ง</span></h4>
+                </div>
+                <textarea formControlName="subjective" placeholder="รายละเอียดอาการ..."></textarea>
+              </div>
+              <div class="soap-note-card">
+                <div class="snc-header">
+                  <div class="snc-badge">O</div>
+                  <h4>Objective <span>— ผลการตรวจร่างกาย</span></h4>
+                </div>
+                <textarea formControlName="objective" placeholder="ผลการตรวจ..."></textarea>
+              </div>
+              <div class="soap-note-card" style="border-width: 2px; border-color: var(--black);">
+                <div class="snc-header" style="background: var(--black); border-bottom: none;">
+                  <div class="snc-badge" style="background: var(--white); color: var(--black);">A</div>
+                  <h4 style="color: var(--white);">Assessment <span style="color: rgba(255,255,255,0.7);">— การวินิจฉัย *</span></h4>
+                </div>
+                <input type="text" formControlName="assessment" placeholder="ระบุการวินิจฉัยหลักของโรค..." style="font-weight: 700;" />
+              </div>
+              <div class="soap-note-card">
+                <div class="snc-header">
+                  <div class="snc-badge">P</div>
+                  <h4>Plan <span>— แผนการรักษาและยา</span></h4>
+                </div>
+                <textarea formControlName="plan" placeholder="การรักษา, ยาที่จ่าย, คำแนะนำ..."></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 4: Billing -->
+          <div class="soap-section" style="border-bottom: none;">
+            <div class="section-label">
+              <span class="section-num" style="background: var(--gray-dark);">4</span>
+              <div>
+                <h3>ค่ารักษาพยาบาล</h3>
+                <p>จะถูกเพิ่มลงในใบแจ้งหนี้อัตโนมัติ</p>
+              </div>
+            </div>
+            <div class="bill-table">
+              <div class="bill-table-header">
+                <span>รายการ</span>
+                <span style="text-align: right; padding-right: 14px;">ราคา (฿)</span>
+                <span></span>
+              </div>
+              @for (row of billRows(); track row.id) {
+                <div class="bill-row">
+                  <input type="text" [value]="row.name" (input)="updateBillRowName(row.id, $any($event.target).value)" placeholder="ชื่อรายการ..." />
+                  <input type="number" [value]="row.price" (input)="updateBillRowPrice(row.id, $any($event.target).value)" style="text-align: right;" placeholder="0" />
+                  <button type="button" class="remove-row-btn" (click)="removeBillRow(row.id)"><mat-icon>close</mat-icon></button>
+                </div>
+              }
+              <button type="button" class="add-row-btn" (click)="addBillRow()"><mat-icon>add</mat-icon> เพิ่มรายการ</button>
+              @if (billRows().length > 0) {
+                <div class="bill-total-bar">
+                  <span class="total-label">ยอดรวม</span>
+                  <span class="total-amount">฿{{ billTotal() | number }}</span>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+
+        <div class="soap-form-footer">
+          <button type="button" class="btn-cancel" (click)="closeForm()">ยกเลิก</button>
+          <button type="submit" class="btn-save-soap">
+            <mat-icon>check</mat-icon>
+            {{ editingId() ? 'อัปเดตบันทึก' : 'บันทึกข้อมูล' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </ng-template>
+
+
+  <!-- === SEARCH BAR === -->
+  <div class="search-stats-bar">
+    <div class="search-wrap">
+      <mat-icon class="search-ico">search</mat-icon>
+      <input type="text" class="search-input" [value]="searchQuery()" (input)="searchQuery.set($any($event.target).value)" placeholder="ค้นหาชื่อสัตว์, การวินิจฉัย..." />
+      @if (searchQuery()) {
+        <button class="clear-search" (click)="searchQuery.set('')"><mat-icon>close</mat-icon></button>
+      }
+    </div>
+    <div class="stats-row">
+      <mat-icon>history</mat-icon>
+      {{ filteredRecords().length }} บันทึกการรักษา
+    </div>
+  </div>
+
+  <!-- === ACCORDION LIST === -->
+  <div class="records-grid">
+    @for (r of filteredRecords(); track r.id) {
+      <div class="record-line-card" [class.expanded]="expandedId() === r.id">
+
+        <!-- Header: Click to expand -->
+        <div class="rlc-header" (click)="toggleExpand(r.id)">
+          <!-- Left: Date -->
+          <div class="date-box">
+            <span class="d-day">{{ r.date | slice:8:10 }}</span>
+            <span class="d-month">{{ r.date | slice:5:7 }}/{{ r.date | slice:2:4 }}</span>
+          </div>
+          <!-- Middle: Info -->
+          <div class="rlc-main">
+            <div class="rlc-top-row">
+              <h3>{{ petName(r.petId) }}</h3>
+              <span class="owner-tag">· {{ ownerName(r.ownerId) }}</span>
+            </div>
+            <div class="rlc-brief">
+              <span class="vet">น.สพ. {{ vetName(r.vetId ?? '') }}</span> — {{ r.assessment }}
+            </div>
+          </div>
+          <!-- Right: Arrow -->
+          <div class="rlc-chevron">
+            <mat-icon>expand_more</mat-icon>
+          </div>
+        </div>
+
+        <!-- Body: Expanded Details -->
+        @if (expandedId() === r.id) {
+          <div class="rlc-body">
+            
+            <!-- Vitals Row -->
+            <div class="vitals-row">
+              @if (r.weight) { <span class="v-badge" matTooltip="น้ำหนัก"><mat-icon>scale</mat-icon> {{ r.weight }} กก.</span> }
+              @if (r.temperature) { <span class="v-badge" matTooltip="อุณหภูมิ"><mat-icon>device_thermostat</mat-icon> {{ r.temperature }}°C</span> }
+              @if (r.heartRate) { <span class="v-badge" matTooltip="ชีพจร"><mat-icon>monitor_heart</mat-icon> {{ r.heartRate }} bpm</span> }
+              @if (r.respiratoryRate) { <span class="v-badge" matTooltip="อัตราการหายใจ"><mat-icon>air</mat-icon> {{ r.respiratoryRate }} /min</span> }
+            </div>
+
+            <!-- SOAP Details -->
+            <div class="soap-grid">
+              <div class="soap-item">
+                <div class="s-label"><div class="s-dot">S</div> อาการที่พบ (Subjective)</div>
+                <p>{{ r.subjective }}</p>
+              </div>
+              <div class="soap-item">
+                <div class="s-label"><div class="s-dot">O</div> ผลตรวจร่างกาย (Objective)</div>
+                <p>{{ r.objective }}</p>
+              </div>
+              <div class="soap-item" style="grid-column: 1 / -1; padding: 16px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px;">
+                <div class="s-label"><div class="s-dot a">A</div> การวินิจฉัย (Assessment)</div>
+                <p style="font-size: 16px; font-weight: 700;">{{ r.assessment }}</p>
+              </div>
+              <div class="soap-item" style="grid-column: 1 / -1;">
+                <div class="s-label"><div class="s-dot">P</div> แผนการรักษา (Plan)</div>
+                <p>{{ r.plan }}</p>
+              </div>
+            </div>
+
+            <!-- Actions (Admin only typically, but we allow both here based on role limits) -->
+            <div class="rlc-actions">
+              <button (click)="handleAction('พิมพ์ใบรับรอง')"><mat-icon>print</mat-icon> พิมพ์ใบรับรอง</button>
+              <button (click)="startEdit(r.id)"><mat-icon>edit</mat-icon> แก้ไข</button>
+              @if (auth.role === 'admin') {
+                <button class="delete" (click)="remove(r.id)"><mat-icon>delete</mat-icon> ลบข้อมูล</button>
+              }
+            </div>
+
+          </div>
+        }
+
+      </div>
+    }
+
+    @if (filteredRecords().length === 0) {
+      <div style="padding: 40px; text-align: center; color: var(--gray-mid); border: 1px dashed var(--border); border-radius: 12px;">
+        <mat-icon style="font-size: 32px; width: 32px; height: 32px; margin-bottom: 12px;">inbox</mat-icon>
+        <h3 style="margin: 0 0 6px; color: var(--black); font-size: 16px;">ไม่พบประวัติการรักษา</h3>
+        <p style="margin: 0; font-size: 14px;">ยังไม่มีบันทึกสำหรับเงื่อนไขนี้</p>
+      </div>
+    }
+  </div>
+
+</div>

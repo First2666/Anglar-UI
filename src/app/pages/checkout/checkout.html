@@ -1,0 +1,206 @@
+@if (submitted()) {
+  <!-- ── Success Screen ── -->
+  <div class="success-screen">
+    <div class="success-card">
+      <div class="success-icon-wrap">
+        <mat-icon class="success-icon">check_circle</mat-icon>
+      </div>
+      <h1 class="success-title">สั่งซื้อสำเร็จ!</h1>
+      <p class="success-sub">หมายเลขคำสั่งซื้อของคุณ</p>
+      <div class="order-id-badge">{{ orderId() }}</div>
+      <p class="success-note">เราจะดำเนินการจัดส่งสินค้าให้โดยเร็วที่สุด ขอบคุณที่ใช้บริการ</p>
+      <div class="success-actions">
+        <button class="primary-btn" (click)="goToOrders()">
+          <mat-icon>receipt_long</mat-icon>
+          ดูประวัติการสั่งซื้อ
+        </button>
+        <button class="outline-btn" (click)="goToShop()">
+          <mat-icon>storefront</mat-icon>
+          กลับไปเลือกสินค้า
+        </button>
+      </div>
+    </div>
+  </div>
+
+} @else {
+  <div class="checkout-page">
+
+    <!-- Header -->
+    <div class="checkout-header">
+      <button class="back-btn" (click)="goToCart()">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <div>
+        <h1 class="page-title">ชำระเงิน</h1>
+        <p class="page-sub">{{ totalItems() }} รายการ · ฿{{ totalPrice() | number }}</p>
+      </div>
+    </div>
+
+    <div class="checkout-layout">
+
+      <!-- ── Left: Form ── -->
+      <div class="checkout-form">
+
+        <!-- Address -->
+        <div class="form-section">
+          <div class="form-header-row">
+            <h2 class="section-title">
+              <mat-icon>location_on</mat-icon>
+              ที่อยู่จัดส่ง
+            </h2>
+            @if (savedAddresses().length > 0) {
+              <div class="saved-toggle-hint">เลือกจากที่อยู่ล่าสุด</div>
+            }
+          </div>
+
+          @if (savedAddresses().length > 0) {
+            <div class="saved-options-scroll">
+              @for (addr of savedAddresses(); track addr) {
+                <button 
+                  class="saved-pill" 
+                  [class.active]="address() === addr" 
+                  (click)="address.set(addr)"
+                >
+                  <mat-icon>history</mat-icon>
+                  <span class="truncate">{{ addr }}</span>
+                </button>
+              }
+            </div>
+          }
+
+          <textarea
+            class="form-textarea"
+            [class.error]="errors()['address']"
+            rows="3"
+            placeholder="บ้านเลขที่, ถนน, แขวง, เขต, จังหวัด, รหัสไปรษณีย์"
+            [ngModel]="address()"
+            (ngModelChange)="address.set($event)"
+          ></textarea>
+          @if (errors()['address']) {
+            <p class="error-msg"><mat-icon>error_outline</mat-icon> {{ errors()['address'] }}</p>
+          }
+        </div>
+
+        <!-- Phone -->
+        <div class="form-section">
+          <div class="form-header-row">
+            <h2 class="section-title">
+              <mat-icon>phone</mat-icon>
+              เบอร์โทรศัพท์
+            </h2>
+            @if (savedPhones().length > 0) {
+              <div class="saved-toggle-hint">เบอร์ที่ใช้บ่อย</div>
+            }
+          </div>
+
+          @if (savedPhones().length > 0) {
+            <div class="saved-options-scroll">
+              @for (ph of savedPhones(); track ph) {
+                <button 
+                  class="saved-pill" 
+                  [class.active]="phone() === ph" 
+                  (click)="phone.set(ph)"
+                >
+                  <mat-icon>contact_phone</mat-icon>
+                  {{ ph }}
+                </button>
+              }
+            </div>
+          }
+
+          <input
+            class="form-input"
+            [class.error]="errors()['phone']"
+            type="tel"
+            placeholder="0812345678"
+            [ngModel]="phone()"
+            (ngModelChange)="phone.set($event)"
+          />
+          @if (errors()['phone']) {
+            <p class="error-msg"><mat-icon>error_outline</mat-icon> {{ errors()['phone'] }}</p>
+          }
+        </div>
+
+        <!-- Payment -->
+        <div class="form-section">
+          <h2 class="section-title">
+            <mat-icon>payment</mat-icon>
+            วิธีชำระเงิน
+          </h2>
+          <div class="payment-options">
+            @for (opt of paymentOptions; track opt.value) {
+              <button
+                class="payment-card"
+                [class.selected]="paymentMethod() === opt.value"
+                (click)="paymentMethod.set(opt.value)"
+              >
+                <div class="pay-icon-wrap" [class.selected]="paymentMethod() === opt.value">
+                  <mat-icon>{{ opt.icon }}</mat-icon>
+                </div>
+                <div>
+                  <p class="pay-label">{{ opt.label }}</p>
+                  <p class="pay-desc">{{ opt.desc }}</p>
+                </div>
+                @if (paymentMethod() === opt.value) {
+                  <mat-icon class="check-icon">check_circle</mat-icon>
+                }
+              </button>
+            }
+          </div>
+        </div>
+
+        <!-- Note -->
+        <div class="form-section">
+          <h2 class="section-title">
+            <mat-icon>note_alt</mat-icon>
+            หมายเหตุ (ถ้ามี)
+          </h2>
+          <input
+            class="form-input"
+            type="text"
+            placeholder="เช่น ฝากไว้ที่รปภ., โทรก่อนส่ง"
+            [ngModel]="note()"
+            (ngModelChange)="note.set($event)"
+          />
+        </div>
+      </div>
+
+      <!-- ── Right: Order Summary ── -->
+      <div class="order-summary">
+        <h2 class="summary-title">รายการสินค้า</h2>
+        <div class="summary-items">
+          @for (item of items(); track item.product.id) {
+            <div class="summary-item">
+              <div class="sum-icon-wrap" [style.--icon-color]="item.product.iconColor || '#6c63ff'">
+                <mat-icon class="sum-icon">{{ item.product.icon }}</mat-icon>
+              </div>
+              <div class="sum-info">
+                <p class="sum-name">{{ item.product.name }}</p>
+                <p class="sum-qty">x{{ item.quantity }} {{ item.product.unit }}</p>
+              </div>
+              <span class="sum-price">฿{{ (item.product.price * item.quantity) | number }}</span>
+            </div>
+          }
+        </div>
+        <div class="summary-divider"></div>
+        <div class="summary-row">
+          <span>ค่าจัดส่ง</span>
+          <span class="free">
+            <mat-icon>local_shipping</mat-icon>
+            ฟรี
+          </span>
+        </div>
+        <div class="summary-total">
+          <span>ยอดรวมทั้งหมด</span>
+          <span class="total-amt">฿{{ totalPrice() | number }}</span>
+        </div>
+
+        <button class="place-order-btn" (click)="placeOrder()">
+          <mat-icon>shopping_bag</mat-icon>
+          ยืนยันคำสั่งซื้อ
+        </button>
+      </div>
+
+    </div>
+  </div>
+}

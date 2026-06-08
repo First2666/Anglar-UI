@@ -1,0 +1,165 @@
+<div class="impeccable-page">
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-titles">
+      <h1>ทำเนียบแพทย์และบุคลากร (Staff & Vets)</h1>
+      <p class="subtitle">ข้อมูลสัตวแพทย์และผู้เชี่ยวชาญประจำคลินิก</p>
+    </div>
+    <div class="header-actions">
+      <button mat-raised-button color="primary" class="rounded-btn" (click)="startCreate()">
+        <mat-icon>person_add</mat-icon>
+        <span>เพิ่มบุคลากรใหม่</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Form Modal -->
+  <ng-template #formDialog>
+    <div class="dialog-container">
+      <div class="form-header">
+        <h2>{{ editingId() ? 'แก้ไขข้อมูลสัตวแพทย์' : 'ลงทะเบียนสัตวแพทย์ใหม่' }}</h2>
+        <button mat-icon-button class="close-btn" (click)="closeForm()"><mat-icon>close</mat-icon></button>
+      </div>
+
+      <div class="form-body">
+        <form class="bento-form form-grid" [formGroup]="form" (ngSubmit)="save()">
+          <mat-form-field appearance="outline" class="col-span-full">
+            <mat-label>ชื่อ-นามสกุล และ คำนำหน้า</mat-label>
+            <mat-icon matPrefix>badge</mat-icon>
+            <input matInput formControlName="fullName" autocomplete="name" placeholder="เช่น น.สพ. กฤติน สุขสวัสดิ์" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>สาขาความเชี่ยวชาญ</mat-label>
+            <mat-icon matPrefix>military_tech</mat-icon>
+            <mat-select formControlName="specialty">
+              @for (s of specialtyOptions; track s) {
+              <mat-option [value]="s">{{ specialtyThai(s) }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <div class="toggle-row inline-form-element">
+             <mat-slide-toggle formControlName="available" color="primary">สถานะพร้อมรับตรวจ (Available)</mat-slide-toggle>
+          </div>
+
+          <mat-form-field appearance="outline">
+            <mat-label>เบอร์โทรศัพท์ (ภายใน)</mat-label>
+            <mat-icon matPrefix>phone</mat-icon>
+            <input matInput formControlName="phone" autocomplete="tel" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>อีเมลติดต่อ</mat-label>
+            <mat-icon matPrefix>email</mat-icon>
+            <input matInput formControlName="email" autocomplete="email" />
+          </mat-form-field>
+
+          <div class="col-span-full" style="margin-top: 12px; margin-bottom: 4px;">
+            <h3 style="font-size: 14px; font-weight: 700; color: var(--primary);">ข้อมูลบัญชีผู้ใช้เข้าสู่ระบบ (Optional)</h3>
+            <p style="font-size: 12px; color: var(--text-muted);">หากต้องการให้บุคลากรเข้าสู่ระบบได้ โปรดตั้งค่ารหัส</p>
+          </div>
+          
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>ชื่อผู้ใช้ (Username)</mat-label>
+            <mat-icon matPrefix>account_circle</mat-icon>
+            <input matInput formControlName="username" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>รหัสผ่าน (Password)</mat-label>
+            <mat-icon matPrefix>lock</mat-icon>
+            <input matInput formControlName="password" type="text" />
+          </mat-form-field>
+
+          <div class="form-actions col-span-full">
+            <button mat-button type="button" class="cancel-btn" (click)="closeForm()">ยกเลิก</button>
+            <button mat-raised-button color="primary" class="rounded-btn" type="submit">
+              <mat-icon>save</mat-icon> {{ editingId() ? 'อัปเดตข้อมูล' : 'บันทึก' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </ng-template>
+
+  <!-- Search Filter -->
+  <div class="filter-toolbar-premium">
+    <div class="search-box-premium">
+      <mat-icon>search</mat-icon>
+      <input type="text" [value]="searchQuery()" (input)="searchQuery.set($any($event.target).value)" placeholder="ค้นหาชื่อแพทย์, ความเชี่ยวชาญ..." />
+    </div>
+    <div class="toolbar-stats-premium">
+      <div class="stat-pill">
+        <mat-icon>clinical_notes</mat-icon>
+        <span>บุคลากรทั้งหมด <b>{{ filteredVets().length }}</b> ท่าน</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Grid Layout for Vets -->
+  <div class="vet-bento-grid">
+    @for (v of filteredVets(); track v.id) {
+      <div class="vet-card-premium" [class.is-busy]="!v.available">
+        <div class="card-bg-glow"></div>
+        
+        <div class="vet-card-header">
+          <div class="status-indicator" [class.available]="v.available">
+            <div class="pulse-dot"></div>
+            <span>{{ v.available ? 'ว่างรับเคส' : 'กำลังติดเคส' }}</span>
+          </div>
+          
+          <div class="vet-actions-mini">
+            <button mat-icon-button class="mini-btn edit" (click)="startEdit(v.id)" matTooltip="แก้ไข">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button class="mini-btn delete" (click)="remove(v.id)" matTooltip="ลบ">
+              <mat-icon>delete_outline</mat-icon>
+            </button>
+          </div>
+        </div>
+
+        <div class="vet-card-body">
+          <div class="vet-profile">
+            <div class="vet-avatar-wrap">
+              <div class="vet-avatar-initials">{{ v.fullName[0] }}</div>
+              <div class="vet-avatar-ring"></div>
+            </div>
+            
+            <div class="vet-identity">
+              <h3 class="vet-name">{{ v.fullName }}</h3>
+              <p class="vet-specialty">{{ specialtyThai(v.specialty) }}</p>
+            </div>
+          </div>
+
+          <div class="vet-contact-info">
+            <div class="contact-item">
+              <div class="icon-box"><mat-icon>phone</mat-icon></div>
+              <div class="contact-val">
+                <span class="label">เบอร์ติดต่อ</span>
+                <span class="value">{{ v.phone || '—' }}</span>
+              </div>
+            </div>
+            <div class="contact-item">
+              <div class="icon-box"><mat-icon>alternate_email</mat-icon></div>
+              <div class="contact-val">
+                <span class="label">อีเมล</span>
+                <span class="value">{{ v.email || '—' }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+
+    @if (filteredVets().length === 0) {
+      <div class="empty-state-premium col-span-full">
+        <div class="empty-icon-box">
+          <mat-icon>medical_information</mat-icon>
+        </div>
+        <h3>ไม่พบผลการค้นหา</h3>
+        <p>คุณยังไม่ได้เพิ่มข้อมูลสัตวแพทย์ลงในระบบ หรือคำค้นหาไม่ตรงกับที่มี</p>
+      </div>
+    }
+  </div>
+</div>

@@ -1,0 +1,772 @@
+@use '@angular/material' as mat;
+
+/* Impeccable Style Fonts: Outfit for pristine headers, Plus Jakarta Sans for crisp legible body */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
+html {
+  height: 100%;
+  color-scheme: dark;
+  scroll-behavior: smooth;
+  @include mat.theme((color: (primary: mat.$blue-palette,
+        theme-type: dark,
+      ),
+      typography: 'Plus Jakarta Sans',
+      density: -1,
+    ));
+}
+
+[data-theme='light'] {
+  color-scheme: light;
+  @include mat.theme((color: (primary: mat.$blue-palette,
+      ),
+      density: -1,
+    ));
+}
+
+:root {
+  /* Dashboard Dark Theme - PRECISE MONOCHROME */
+  --app-bg: #000000;
+  --card-bg: #0a0a0a;
+  --border-color: rgba(255, 255, 255, 0.1);
+
+  --text-main: #ffffff;
+  --text-muted: #999999;
+  --text-link: #ffffff;
+
+  --primary: #ffffff;
+  --primary-hover: #e0e0e0;
+  --accent: #ffffff;
+
+  /* Status Colors adjusted for B&W context - keeping minimal color for semantics */
+  --ig-blue: #3b82f6; 
+  --ig-red: #ef4444; 
+  --ig-green: #22c55e;
+  --ig-orange: #f59e0b;
+
+  /* Structural Shadows */
+  --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.7);
+  --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.9);
+  --shadow-hover: 0 12px 32px rgba(0, 0, 0, 0.8);
+
+  --glass-bg: rgba(10, 10, 10, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.08);
+
+  /* Sidebar Variables */
+  --sidebar-bg: transparent;
+  --sidebar-border: transparent;
+  --user-badge-bg: rgba(255, 255, 255, 0.08);
+  --nav-hover-bg: rgba(255, 255, 255, 0.05);
+  --nav-active-bg: rgba(255, 255, 255, 0.12);
+
+  /* Organic Bento Specific Monochrome Variables */
+  --bento-shell-bg: rgba(255, 255, 255, 0.02);
+  --bento-shell-border: rgba(255, 255, 255, 0.1);
+  --bento-card-bg: #0d0d0d;
+  --bento-card-border: rgba(255, 255, 255, 0.1);
+  --bento-btn-bg: #151515;
+  --bento-btn-hover: #222222;
+  --bento-btn-border: rgba(255, 255, 255, 0.12);
+  --bento-text: #ffffff;
+  --bento-text-muted: rgba(255, 255, 255, 0.5);
+  --bento-item-bg: rgba(255, 255, 255, 0.04);
+  --bento-item-hover: rgba(255, 255, 255, 0.08);
+  --gradient-accent: linear-gradient(135deg, #111111, #000000);
+  --gradient-system: linear-gradient(135deg, #0d0d0d, #000000);
+  --kpi-gradient: linear-gradient(135deg, #ffffff, #888888);
+  --dot-bg: rgba(255, 255, 255, 0.2);
+  --accent-soft: rgba(255, 255, 255, 0.05);
+  --bento-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+  --bento-shell-shadow: 0 24px 64px rgba(0, 0, 0, 0.5);
+
+  /* Semantic Mapping */
+  --clr-primary: var(--primary);
+  --clr-text: var(--text-main);
+  --clr-text-muted: var(--text-muted);
+  --clr-surface: var(--card-bg);
+  --clr-border: var(--border-color);
+  --clr-bg: var(--app-bg);
+
+  /* Material MDC Variables - MONOCHROME */
+  --mdc-outlined-text-field-container-shape: 16px;
+  --mdc-outlined-text-field-outline-color: rgba(255, 255, 255, 0.2);
+  --mdc-outlined-text-field-hover-outline-color: rgba(255, 255, 255, 0.4);
+  --mdc-outlined-text-field-focus-outline-color: #ffffff;
+  --mdc-outlined-text-field-container-color: #000000;
+  --mdc-outlined-text-field-caret-color: #ffffff;
+  --mdc-outlined-text-field-focus-label-text-color: #ffffff;
+  
+  --radius-main: 24px;
+  --radius-sm: 16px;
+  --radius-pill: 9999px;
+  --transition-smooth: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-bounce: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  --transition-flow: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-bounce-soft: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+[data-theme='light'] {
+  /* LIGHT MONOCHROME */
+  --app-bg: #ffffff;
+  --card-bg: #f8f8f8;
+  --border-color: rgba(0, 0, 0, 0.08);
+
+  --text-main: #000000;
+  --text-muted: #666666;
+  --text-link: #000000;
+
+  --primary: #000000;
+  --primary-hover: #333333;
+  --accent: #000000;
+
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.12);
+  --shadow-hover: 0 12px 32px rgba(0, 0, 0, 0.1);
+
+  --glass-bg: rgba(255, 255, 255, 0.8);
+  --glass-border: rgba(0, 0, 0, 0.05);
+
+  --sidebar-bg: transparent;
+  --sidebar-border: transparent;
+  --user-badge-bg: #efefef;
+  --nav-hover-bg: rgba(0, 0, 0, 0.04);
+  --nav-active-bg: rgba(0, 0, 0, 0.08);
+
+  --bento-shell-bg: #f5f5f5;
+  --bento-shell-border: rgba(0, 0, 0, 0.06);
+  --bento-card-bg: #ffffff;
+  --bento-card-border: rgba(0, 0, 0, 0.08);
+  --bento-btn-bg: #eeeeee;
+  --bento-btn-hover: #e0e0e0;
+  --bento-btn-border: rgba(0, 0, 0, 0.1);
+  --bento-text: #000000;
+  --bento-text-muted: rgba(0, 0, 0, 0.5);
+  --bento-item-bg: rgba(0, 0, 0, 0.03);
+  --bento-item-hover: rgba(0, 0, 0, 0.06);
+  --gradient-accent: linear-gradient(135deg, #ffffff, #f0f0f0);
+  --gradient-system: linear-gradient(135deg, #ffffff, #f5f5f5);
+  --kpi-gradient: linear-gradient(135deg, #000000, #555555);
+  --dot-bg: rgba(0, 0, 0, 0.1);
+  --accent-soft: rgba(0, 0, 0, 0.03);
+  --bento-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
+  --bento-shell-shadow: 0 12px 40px rgba(0, 0, 0, 0.04);
+
+  /* Material MDC Overrides */
+  --mdc-outlined-text-field-outline-color: rgba(0, 0, 0, 0.15);
+  --mdc-outlined-text-field-hover-outline-color: rgba(0, 0, 0, 0.3);
+  --mdc-outlined-text-field-focus-outline-color: #000000;
+  --mdc-outlined-text-field-container-color: #ffffff;
+  --mdc-outlined-text-field-caret-color: #000000;
+  --mdc-outlined-text-field-focus-label-text-color: #000000;
+}
+
+body {
+  color-scheme: dark;
+  background-color: var(--app-bg);
+  color: var(--text-main);
+  font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+  letter-spacing: -0.01em;
+  margin: 0;
+  height: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+[data-theme='light'] body {
+  color-scheme: light;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.display-heading {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 700;
+  color: var(--text-main);
+  letter-spacing: -0.03em;
+  /* Impeccable confident headers */
+}
+
+/* ── Premium Panels & Cards ─────────────── */
+.card,
+.glass-panel,
+.bento-card {
+  background: var(--card-bg) !important;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-main) !important;
+  margin-bottom: 24px;
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition-smooth);
+  overflow: hidden;
+
+  /* Premium hover effect */
+  @media (min-width: 768px) {
+    &:hover {
+      box-shadow: var(--shadow-md);
+      border-color: rgba(255, 255, 255, 0.15);
+    }
+  }
+}
+
+
+/* Base class for pure glassmorphism */
+.premium-glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+}
+
+/* ── Status badges (Subtle text rather than bold badges) ──────── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-muted);
+  /* By default */
+  background: transparent;
+}
+
+.badge-scheduled {
+  color: var(--ig-blue);
+}
+
+.badge-checkedin {
+  color: #8a3ab9;
+}
+
+/* IG purpleish */
+.badge-insession {
+  color: var(--ig-orange);
+}
+
+.badge-completed {
+  color: var(--text-muted);
+}
+
+.badge-cancelled {
+  color: var(--ig-red);
+}
+
+/* ── Form overrides for IG/Modern feel ──────── */
+/* Color enhancements in Light Mode for Forms */
+[data-theme='light']:root {
+  --mdc-outlined-text-field-focus-outline-color: #000000; /* Crisp Black focus */
+  --mdc-outlined-text-field-caret-color: #000000;
+  --mdc-outlined-text-field-focus-label-text-color: #000000;
+}
+
+[data-theme='dark']:root {
+  --mdc-outlined-text-field-focus-outline-color: #ffffff; /* Crisp White focus */
+  --mdc-outlined-text-field-caret-color: #ffffff;
+  --mdc-outlined-text-field-focus-label-text-color: #ffffff;
+}
+
+/* ── Colorful Decor Additions ─────────────── */
+.gradient-text {
+  background: linear-gradient(135deg, #0ea5e9, #8b5cf6);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
+}
+
+.colorful-header {
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 6px;
+    background: linear-gradient(90deg, #0ea5e9, #8b5cf6, #ec4899);
+  }
+}
+
+.btn-gradient {
+  background: linear-gradient(135deg, #0ea5e9, #8b5cf6) !important;
+  color: #ffffff !important;
+  border: none !important;
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3) !important;
+  
+  &:hover {
+    transform: translateY(-2px) scale(1.02) !important;
+    box-shadow: 0 8px 20px rgba(139, 92, 246, 0.4) !important;
+    background: linear-gradient(135deg, #0284c7, #7c3aed) !important;
+  }
+  
+  &:active {
+    transform: translateY(0) scale(0.98) !important;
+  }
+}
+
+.mat-mdc-text-field-wrapper {
+  background-color: var(--app-bg) !important;
+  border-radius: 16px !important;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.mat-mdc-form-field {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  display: block;
+}
+
+.mat-mdc-form-field:hover .mat-mdc-text-field-wrapper {
+  transform: translateY(-2px);
+  background-color: var(--card-bg) !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1) !important;
+}
+
+.mat-mdc-form-field.mat-focused .mat-mdc-text-field-wrapper {
+  background-color: var(--card-bg) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2) !important;
+}
+
+.mdc-notched-outline {
+  transition: var(--transition-smooth) !important;
+}
+
+.mat-mdc-form-field:hover .mdc-notched-outline__leading,
+.mat-mdc-form-field:hover .mdc-notched-outline__notch,
+.mat-mdc-form-field:hover .mdc-notched-outline__trailing {
+  border-color: var(--text-main) !important;
+}
+
+/* ── Minimal Dialog Container (Popups) ──────── */
+.minimal-dialog .mat-mdc-dialog-surface,
+.p-0-dialog .mat-mdc-dialog-surface {
+  background: var(--card-bg) !important;
+  border-radius: 20px !important;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-lg) !important;
+  overflow: hidden;
+  padding: 0 !important;
+}
+
+.dialog-container {
+  padding: 24px;
+  background: var(--card-bg);
+  border-radius: var(--radius-main);
+}
+
+.dialog-container .form-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.dialog-container .form-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  letter-spacing: -0.02em;
+}
+
+.dialog-container .close-btn {
+  background: var(--app-bg) !important;
+  color: var(--text-main) !important;
+  transition: var(--transition-bounce) !important;
+}
+
+.dialog-container .close-btn:hover {
+  transform: rotate(90deg) scale(1.1);
+  background: var(--ig-red) !important;
+  color: white !important;
+}
+
+/* ── Datepicker overrides ──────── */
+.mat-datepicker-content {
+  background-color: var(--card-bg) !important;
+  border-radius: 24px !important;
+  border: 1px solid var(--border-color) !important;
+  box-shadow: var(--shadow-lg) !important;
+  padding: 8px;
+}
+
+.mat-calendar-body-selected {
+  background-color: var(--text-main) !important;
+  color: var(--app-bg) !important;
+}
+
+.mat-calendar-body-today:not(.mat-calendar-body-selected) {
+  border-color: var(--text-muted) !important;
+}
+
+.mat-datepicker-toggle-active {
+  color: var(--text-main) !important;
+}
+
+/* ── Top Page Header (If used inside feed) ──────── */
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  padding: 16px 16px 0;
+
+  h2 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-main);
+  }
+
+  .subtle {
+    display: none;
+    /* Hide subtitle for cleaner look */
+  }
+
+  .actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+}
+
+/* ── Buttons (Premium aesthetic) ─────────────── */
+button[mat-raised-button],
+button[mat-flat-button] {
+  border-radius: 999px !important;
+  /* Fully rounded buttons look more modern than slightly rounded */
+  font-weight: 600 !important;
+  font-size: 14px !important;
+  padding: 0 20px !important;
+  height: 40px !important;
+  box-shadow: none !important;
+  transition: var(--transition-bounce) !important;
+  letter-spacing: 0.3px;
+
+  &.mat-primary {
+    background: var(--primary) !important;
+    color: var(--app-bg) !important;
+    /* Fixed: was hardcoded white, causing invisibility in dark mode */
+
+    &:hover {
+      background: var(--primary-hover) !important;
+      transform: scale(1.03);
+      box-shadow: var(--shadow-hover) !important;
+    }
+
+    &:active {
+      transform: scale(0.97);
+    }
+  }
+}
+
+/* Icon Buttons hover effect */
+.mat-mdc-icon-button {
+  transition: var(--transition-bounce) !important;
+
+  &:hover {
+    transform: scale(1.1);
+    color: var(--primary) !important;
+  }
+
+  &:active {
+    transform: scale(0.9);
+  }
+}
+
+.filter-chips {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+  padding: 0 16px;
+}
+
+.filter-chip {
+  border-radius: 999px !important;
+  border: 1px solid var(--border-color) !important;
+  height: 32px;
+  font-size: 14px;
+  padding: 0 16px;
+  font-weight: 600;
+  background: var(--app-bg);
+  color: var(--text-main);
+
+  &.active {
+    background: var(--text-main) !important;
+    color: var(--app-bg) !important;
+    border-color: var(--text-main) !important;
+  }
+}
+
+/* Hide standard tables, we will use custom feeds */
+.table {
+  display: none;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 60px 20px;
+  text-align: center;
+  background: transparent;
+  border: none;
+
+  mat-icon {
+    font-size: 64px;
+    width: 64px;
+    height: 64px;
+    color: var(--text-main);
+    font-weight: 100;
+  }
+
+  p {
+    margin: 0;
+    font-size: 14px;
+    color: var(--text-muted);
+  }
+}
+
+.slide-down-form {
+  overflow: hidden;
+  animation: slideDownCustom 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.1) forwards;
+  transform-origin: top;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-main);
+  margin: 16px;
+  box-shadow: var(--shadow-md);
+  background: var(--card-bg);
+  padding: 24px;
+}
+
+@keyframes slideDownCustom {
+  from {
+    opacity: 0;
+    transform: translateY(-15px) scale(0.98);
+    max-height: 0;
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    max-height: 2000px;
+  }
+}
+
+/* Responsive grid fallback */
+.grid {
+  display: block;
+}
+
+/* Shared Forms & Modals Styles */
+.my-4 { margin-top: 24px; margin-bottom: 24px; }
+.text-red { color: #ef4444 !important; }
+
+.form-header, .panel-header {
+  padding: 24px 32px 16px;
+  border-bottom: 1px solid var(--border-color);
+  
+  h2, h3 { font-size: 20px; font-weight: 800; margin: 0; }
+}
+
+.form-body, .panel-body { padding: 32px; }
+
+.form-layout-split {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  
+  @media (min-width: 768px) {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+
+  .photo-column {
+    @media (min-width: 768px) {
+      width: 250px;
+      flex-shrink: 0;
+    }
+  }
+
+  .fields-column {
+    flex: 1;
+  }
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 16px;
+  
+  @media (min-width: 640px) { grid-template-columns: repeat(2, 1fr); }
+  
+  .col-span-full { grid-column: 1 / -1; }
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border-color);
+}
+
+/* ── Premium Dropdown (mat-select) Overrides ──────── */
+.cdk-overlay-pane {
+  /* Ensure the dropdown position doesn't have an ugly default offset */
+  margin-top: 4px;
+}
+
+.mat-mdc-select-panel {
+  background: var(--card-bg) !important;
+  border-radius: 20px !important;
+  border: 1px solid var(--border-color) !important;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25) !important;
+  padding: 6px !important;
+  min-width: 200px !important;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+[data-theme='light'] .mat-mdc-select-panel {
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08) !important;
+  background: rgba(255, 255, 255, 0.95) !important;
+}
+
+.mat-mdc-option {
+  border-radius: 12px !important;
+  margin-bottom: 2px !important;
+  transition: all 0.2s ease !important;
+  min-height: 44px !important;
+  padding: 0 16px !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  color: var(--text-main) !important;
+
+  &:hover:not(.mdc-list-item--disabled) {
+    background: var(--nav-active-bg, rgba(255, 255, 255, 0.1)) !important;
+    transform: translateX(4px);
+  }
+
+  &.mdc-list-item--selected:not(.mdc-list-item--disabled) {
+    background: var(--nav-active-bg, rgba(255, 255, 255, 0.15)) !important;
+    color: var(--text-main) !important;
+    position: relative;
+    border: 1px solid rgba(139, 92, 246, 0.3) !important;
+
+    &::after {
+      content: 'check';
+      font-family: 'Material Icons';
+      position: absolute;
+      right: 16px;
+      font-size: 18px;
+      color: var(--text-main);
+      opacity: 0.8;
+    }
+
+    .mdc-list-item__primary-text {
+      color: var(--text-main) !important;
+      font-weight: 700 !important;
+    }
+  }
+
+  .mdc-list-item__primary-text {
+    color: var(--text-main) !important;
+  }
+}
+
+.mat-mdc-select-value {
+  color: var(--text-main) !important;
+  font-weight: 600 !important;
+  font-size: 15px !important;
+}
+
+.mat-mdc-select-placeholder {
+  color: var(--text-muted) !important;
+  font-weight: 500 !important;
+}
+
+.mat-mdc-select-arrow {
+  color: var(--text-muted) !important;
+}
+
+.mat-mdc-form-field.mat-focused .mat-mdc-select-arrow {
+  color: var(--text-main) !important;
+}
+
+/* Fix for Multi-select chips if used */
+.mat-mdc-chip {
+  background: var(--nav-active-bg) !important;
+  border-radius: 8px !important;
+  color: var(--text-main) !important;
+}
+
+/* ── Flowy Animation Utilities ─────────────── */
+@keyframes flowFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes flowScaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-fade-up {
+  animation: flowFadeUp 0.8s var(--transition-flow) forwards;
+}
+
+.animate-scale-in {
+  animation: flowScaleIn 0.8s var(--transition-flow) forwards;
+}
+
+/* Common staggered entry setup */
+.stagger-container > * {
+  opacity: 0;
+}
+
+.stagger-1 { animation-delay: 0.1s; }
+.stagger-2 { animation-delay: 0.15s; }
+.stagger-3 { animation-delay: 0.2s; }
+.stagger-4 { animation-delay: 0.25s; }
+.stagger-5 { animation-delay: 0.3s; }
+.stagger-6 { animation-delay: 0.35s; }
+
+/* Reveal on scroll base */
+.reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: var(--transition-flow);
+  
+  &.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-delay: -1ms !important;
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    background-attachment: initial !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0s !important;
+    transition-delay: 0s !important;
+  }
+}

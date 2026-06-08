@@ -1,0 +1,21 @@
+<div class="confirm-dialog-wrap">
+  <div class="dialog-header">
+    <div class="icon-orb" [style.background-color]="data.iconColor ? data.iconColor + '20' : 'rgba(150, 150, 150, 0.1)'">
+      <mat-icon [style.color]="data.iconColor || 'var(--text-main)'">{{ data.icon || 'warning_amber' }}</mat-icon>
+    </div>
+    <h2 class="dialog-title">{{ data.title }}</h2>
+  </div>
+
+  <div class="dialog-content">
+    <p>{{ data.message }}</p>
+  </div>
+
+  <div class="dialog-actions">
+    <button mat-button class="cancel-btn" (click)="onCancel()">
+      {{ data.cancelText || 'ยกเลิก' }}
+    </button>
+    <button mat-raised-button class="confirm-btn" [style.background-color]="data.iconColor || 'var(--text-main)'" (click)="onConfirm()">
+      {{ data.confirmText || 'ตกลง' }}
+    </button>
+  </div>
+</div>

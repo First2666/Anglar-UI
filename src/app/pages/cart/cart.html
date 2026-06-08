@@ -1,0 +1,98 @@
+<div class="cart-page">
+
+  <div class="cart-header">
+    <button class="back-btn" (click)="goToShop()">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <div>
+      <h1 class="page-title">ตะกร้าสินค้า</h1>
+      <p class="page-sub">{{ totalItems() }} รายการ</p>
+    </div>
+  </div>
+
+  @if (items().length === 0) {
+    <div class="empty-cart">
+      <div class="empty-icon-wrap">
+        <mat-icon class="empty-icon">shopping_cart</mat-icon>
+      </div>
+      <h2>ตะกร้าว่างเปล่า</h2>
+      <p>เลือกสินค้าสำหรับน้องๆ ของคุณก่อนนะ</p>
+      <button class="shop-btn" (click)="goToShop()">
+        <mat-icon>storefront</mat-icon>
+        ไปเลือกสินค้า
+      </button>
+    </div>
+  } @else {
+    <div class="cart-layout">
+
+      <!-- ── Item list ── -->
+      <div class="cart-items">
+        @for (item of items(); track item.product.id) {
+          <div class="cart-row">
+            <div class="item-icon-wrap" [style.--icon-color]="item.product.iconColor || '#6c63ff'">
+              <mat-icon class="item-icon">{{ item.product.icon }}</mat-icon>
+            </div>
+            <div class="cart-info">
+              <p class="cart-name">{{ item.product.name }}</p>
+              <p class="cart-meta">{{ item.product.category }}
+                @if (item.product.brand) { · {{ item.product.brand }} }
+              </p>
+              <p class="cart-unit-price">฿{{ item.product.price | number }} / {{ item.product.unit }}</p>
+            </div>
+            <div class="cart-qty">
+              <button class="qty-btn" (click)="decrement(item)" [disabled]="item.quantity <= 1">
+                <mat-icon>remove</mat-icon>
+              </button>
+              <span class="qty-value">{{ item.quantity }}</span>
+              <button class="qty-btn" (click)="increment(item)" [disabled]="item.quantity >= item.product.stock">
+                <mat-icon>add</mat-icon>
+              </button>
+            </div>
+            <div class="cart-subtotal">
+              ฿{{ (item.product.price * item.quantity) | number }}
+            </div>
+            <button class="remove-btn" (click)="remove(item)">
+              <mat-icon>delete_outline</mat-icon>
+            </button>
+          </div>
+        }
+
+        <button class="clear-btn" (click)="clearAll()">
+          <mat-icon>delete_sweep</mat-icon>
+          ล้างตะกร้าทั้งหมด
+        </button>
+      </div>
+
+      <!-- ── Summary card ── -->
+      <div class="cart-summary">
+        <h2 class="summary-title">สรุปคำสั่งซื้อ</h2>
+
+        <div class="summary-row">
+          <span>สินค้า ({{ totalItems() }} รายการ)</span>
+          <span>฿{{ totalPrice() | number }}</span>
+        </div>
+        <div class="summary-row">
+          <span>ค่าจัดส่ง</span>
+          <span class="free-tag">
+            <mat-icon>local_shipping</mat-icon>
+            ฟรี
+          </span>
+        </div>
+        <div class="summary-divider"></div>
+        <div class="summary-total">
+          <span>ยอดรวม</span>
+          <span class="total-price">฿{{ totalPrice() | number }}</span>
+        </div>
+
+        <button class="checkout-btn" (click)="goToCheckout()">
+          <mat-icon>payment</mat-icon>
+          ดำเนินการชำระเงิน
+        </button>
+        <button class="continue-btn" (click)="goToShop()">
+          <mat-icon>arrow_back</mat-icon>
+          เลือกสินค้าต่อ
+        </button>
+      </div>
+    </div>
+  }
+</div>

@@ -1,0 +1,204 @@
+<div class="impeccable-page">
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-titles">
+      <h1>ทำเนียบเจ้าของสัตว์ (Owners)</h1>
+      <p class="subtitle">ระบบจัดการข้อมูลประวัติส่วนตัวและช่องทางการติดต่อ</p>
+    </div>
+    <div class="header-actions">
+      <button mat-raised-button color="primary" class="rounded-btn" (click)="startCreate()">
+        <mat-icon>person_add</mat-icon>
+        <span>ลงทะเบียนเจ้าของใหม่</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Form Modal -->
+  <ng-template #formDialog>
+    <div class="dialog-container">
+      <div class="form-header">
+        <h2>{{ editingId() ? 'แก้ไขข้อมูลเจ้าของ' : 'เพิ่มบัญชีผู้ใช้ใหม่' }}</h2>
+        <button mat-icon-button class="close-btn" (click)="closeForm()"><mat-icon>close</mat-icon></button>
+      </div>
+
+      <div class="form-body">
+        <form class="bento-form form-grid" [formGroup]="form" (ngSubmit)="save()">
+          <mat-form-field appearance="outline" class="col-span-full">
+            <mat-label>ชื่อ-นามสกุล</mat-label>
+            <mat-icon matPrefix>badge</mat-icon>
+            <input matInput formControlName="fullName" autocomplete="name" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>เบอร์โทรศัพท์</mat-label>
+            <mat-icon matPrefix>phone</mat-icon>
+            <input matInput formControlName="phone" autocomplete="tel" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>อีเมล</mat-label>
+            <mat-icon matPrefix>email</mat-icon>
+            <input matInput formControlName="email" autocomplete="email" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="col-span-full">
+            <mat-label>ที่อยู่ปัจจุบัน</mat-label>
+            <mat-icon matPrefix>home</mat-icon>
+            <input matInput formControlName="address" autocomplete="street-address" />
+          </mat-form-field>
+
+          <div class="form-actions col-span-full">
+            <button mat-button type="button" class="cancel-btn" (click)="closeForm()">ยกเลิก</button>
+            <button mat-raised-button color="primary" class="rounded-btn" type="submit">
+              <mat-icon>save</mat-icon> {{ editingId() ? 'บันทึกการเปลี่ยนแปลง' : 'ลงทะเบียน' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </ng-template>
+
+  <!-- Details Dialog -->
+  <ng-template #detailsDialog>
+    @if (viewedOwner(); as owner) {
+      <div class="dialog-container">
+        <div class="form-header">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <div class="avatar-large" style="width: 48px; height: 48px; border-radius: 12px; font-size: 20px;">{{ owner.fullName[0] }}</div>
+            <div>
+              <h2 style="margin:0; font-size: 20px;">{{ owner.fullName }}</h2>
+              <p style="margin:2px 0 0; font-size: 13px; color: var(--text-muted);">{{ owner.phone }} • {{ owner.email || 'ไม่มีอีเมล' }}</p>
+            </div>
+          </div>
+          <button mat-icon-button class="close-btn" (click)="closeDetails()"><mat-icon>close</mat-icon></button>
+        </div>
+
+        <div class="form-body" style="padding: 24px; max-height: 70vh; overflow-y: auto; display: flex; flex-direction: column; gap: 24px;">
+          
+          <!-- Pets Section -->
+          <div class="detail-section">
+            <h3 style="font-size: 16px; font-weight: 800; margin: 0 0 12px; display: flex; align-items: center; gap: 8px;"><mat-icon style="color: var(--primary);">pets</mat-icon> สัตว์เลี้ยง ({{ viewedPets().length }})</h3>
+            @if (viewedPets().length > 0) {
+              <div style="display: flex; gap: 12px; overflow-x: auto; padding-bottom: 8px;">
+                @for (p of viewedPets(); track p.id) {
+                  <div style="background: var(--app-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 12px 16px; min-width: 140px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 4px;">
+                    <div style="width: 40px; height: 40px; border-radius: 10px; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; margin-bottom: 4px;">
+                      <mat-icon>{{ p.species === 'Dog' ? 'cruelty_free' : p.species === 'Cat' ? 'pets' : 'flutter_dash' }}</mat-icon>
+                    </div>
+                    <span style="font-weight: 700; font-size: 14px; color: var(--text-main);">{{ p.name }}</span>
+                    <span style="font-size: 12px; color: var(--text-muted);">{{ p.breed || p.species }}</span>
+                  </div>
+                }
+              </div>
+            } @else {
+              <div style="padding: 16px; text-align: center; border: 1px dashed var(--border-color); border-radius: 12px; color: var(--text-muted); font-size: 13px;">ยังไม่มีข้อมูลสัตว์เลี้ยง</div>
+            }
+          </div>
+
+          <!-- Appointments Section -->
+          <div class="detail-section">
+            <h3 style="font-size: 16px; font-weight: 800; margin: 0 0 12px; display: flex; align-items: center; gap: 8px;"><mat-icon style="color: var(--primary);">event</mat-icon> ประวัตินัดหมาย ({{ viewedAppts().length }})</h3>
+            @if (viewedAppts().length > 0) {
+              <div style="display: flex; flex-direction: column; gap: 8px;">
+                @for (a of viewedAppts().slice(0, 5); track a.id) {
+                  <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: var(--app-bg); border: 1px solid var(--border-color); border-radius: 10px;">
+                    <div style="display: flex; flex-direction: column;">
+                      <span style="font-weight: 700; font-size: 14px;">{{ a.reason }} <span style="font-weight: normal; font-size: 12px; color: var(--text-muted);">({{ a.status }})</span></span>
+                      <span style="font-size: 12px; color: var(--text-muted);">{{ a.startAt | date:'medium' }}</span>
+                    </div>
+                  </div>
+                }
+                @if (viewedAppts().length > 5) {
+                  <div style="text-align: center; font-size: 12px; color: var(--text-muted); padding-top: 4px;">และอื่น ๆ อีก {{ viewedAppts().length - 5 }} รายการ</div>
+                }
+              </div>
+            } @else {
+              <div style="padding: 16px; text-align: center; border: 1px dashed var(--border-color); border-radius: 12px; color: var(--text-muted); font-size: 13px;">ยังไม่มีประวัติการนัดหมาย</div>
+            }
+          </div>
+
+          <!-- Medical Records Section -->
+          <div class="detail-section">
+            <h3 style="font-size: 16px; font-weight: 800; margin: 0 0 12px; display: flex; align-items: center; gap: 8px;"><mat-icon style="color: var(--primary);">description</mat-icon> ประวัติการรักษา ({{ viewedRecords().length }})</h3>
+            @if (viewedRecords().length > 0) {
+              <div style="display: flex; flex-direction: column; gap: 8px;">
+                @for (r of viewedRecords().slice(0, 5); track r.id) {
+                  <div style="display: flex; flex-direction: column; padding: 12px 16px; background: var(--app-bg); border: 1px solid var(--border-color); border-radius: 10px; gap: 4px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                      <span style="font-weight: 700; font-size: 14px;">{{ r.assessment }}</span>
+                      <span style="font-size: 12px; color: var(--text-muted);">{{ r.date | slice:0:10 }}</span>
+                    </div>
+                    <span style="font-size: 13px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ r.plan }}</span>
+                  </div>
+                }
+                @if (viewedRecords().length > 5) {
+                  <div style="text-align: center; font-size: 12px; color: var(--text-muted); padding-top: 4px;">และอื่น ๆ อีก {{ viewedRecords().length - 5 }} รายการ</div>
+                }
+              </div>
+            } @else {
+              <div style="padding: 16px; text-align: center; border: 1px dashed var(--border-color); border-radius: 12px; color: var(--text-muted); font-size: 13px;">ยังไม่มีประวัติการรักษา</div>
+            }
+          </div>
+
+        </div>
+      </div>
+    }
+  </ng-template>
+
+  <!-- Search Filter -->
+  <div class="filter-toolbar">
+    <div class="search-box">
+      <mat-icon>search</mat-icon>
+      <input type="text" [value]="searchQuery()" (input)="searchQuery.set($any($event.target).value)" placeholder="ค้นหาชื่อ, เบอร์โทร, อีเมล..." />
+    </div>
+    <div class="toolbar-stats">
+      <span class="stat-badge"><mat-icon>group</mat-icon> {{ filteredOwners().length }} ท่าน</span>
+    </div>
+  </div>
+
+  <!-- Grid Layout for Contacts -->
+  <div class="contact-grid">
+    @for (o of filteredOwners(); track o.id) {
+      <div class="contact-card glass-panel">
+        <div class="contact-card-content">
+          <div class="avatar-large">{{ o.fullName[0] }}</div>
+          
+          <h3 class="contact-name">{{ o.fullName }}</h3>
+          
+          <div class="contact-details">
+            <div class="detail-row">
+              <mat-icon>phone</mat-icon>
+              <span>{{ o.phone || 'ไม่มีเบอร์โทร' }}</span>
+            </div>
+            <div class="detail-row">
+              <mat-icon>email</mat-icon>
+              <span>{{ o.email || 'ไม่มีอีเมล' }}</span>
+            </div>
+            <div class="detail-row">
+              <mat-icon>location_on</mat-icon>
+              <span>{{ o.address || 'ไม่มีที่อยู่' }}</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="contact-card-actions">
+          <button mat-button class="action-btn" (click)="viewDetails(o.id)"><mat-icon>visibility</mat-icon> ข้อมูล</button>
+          <div class="divider"></div>
+          <button mat-button class="action-btn" (click)="startEdit(o.id)"><mat-icon>edit</mat-icon> แก้ไข</button>
+          <div class="divider"></div>
+          <button mat-button class="action-btn text-red" (click)="remove(o.id)"><mat-icon class="text-red">delete</mat-icon> ลบ</button>
+        </div>
+      </div>
+    }
+
+    @if (filteredOwners().length === 0) {
+      <div class="empty-state col-span-full">
+        <div class="empty-icon">
+          <mat-icon>person_search</mat-icon>
+        </div>
+        <h3>ไม่พบผลการค้นหา</h3>
+        <p>ลองปรับคำค้นหา หรือเพิ่มข้อมูลเจ้าของใหม่เข้าสู่ระบบ</p>
+      </div>
+    }
+  </div>
+</div>

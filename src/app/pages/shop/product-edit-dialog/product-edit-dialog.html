@@ -1,0 +1,140 @@
+<div class="dialog-container compact-mode">
+  <div class="form-header">
+    <div class="header-left">
+      <mat-icon class="header-icon">{{ isEdit ? 'edit_note' : 'add_circle' }}</mat-icon>
+      <h2>{{ isEdit ? 'รายละเอียดสินค้า' : 'เพิ่มสินค้าใหม่' }}</h2>
+    </div>
+    <button mat-icon-button class="close-btn" (click)="onCancel()" matTooltip="ปิด">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <mat-dialog-content class="premium-scroll">
+    <form [formGroup]="form" class="edit-form">
+      <div class="form-layout-split">
+
+        <!-- Photo Column -->
+        <div class="photo-column">
+          <div class="section-badge">
+            <mat-icon>image</mat-icon>
+            <span>รูปภาพสินค้า</span>
+          </div>
+
+          <div class="premium-upload-area" [class.has-image]="previewUrl()"
+            (click)="!previewUrl() && fileInput.click()">
+            @if (previewUrl()) {
+            <div class="image-preview-wrapper">
+              <img [src]="previewUrl()" alt="Product Preview"
+                (error)="$event.target.src='https://placehold.co/400x300?text=Invalid+Image'">
+              <div class="image-actions">
+                <button type="button" mat-mini-fab color="warn" class="remove-btn"
+                  (click)="removeImage(); $event.stopPropagation()" matTooltip="ลบรูปภาพ">
+                  <mat-icon>delete</mat-icon>
+                </button>
+                <button type="button" mat-mini-fab class="edit-photo-btn"
+                  (click)="fileInput.click(); $event.stopPropagation()" matTooltip="เปลี่ยนรูปภาพ">
+                  <mat-icon>photo_camera</mat-icon>
+                </button>
+              </div>
+            </div>
+            } @else {
+            <div class="upload-placeholder">
+              <div class="icon-circle">
+                <mat-icon>cloud_upload</mat-icon>
+              </div>
+              <span class="main-text">คลิกเพื่ออัปโหลด</span>
+              <span class="sub-text">รองรับ JPG, PNG (สูงสุด 5MB)</span>
+            </div>
+            }
+            <input type="file" #fileInput hidden accept="image/*" (change)="onFileSelected($event)">
+          </div>
+
+          @if (selectedFileName() && previewUrl()) {
+          <div class="file-info-chip">
+            <mat-icon>description</mat-icon>
+            <span>{{ selectedFileName() }}</span>
+          </div>
+          }
+        </div>
+
+        <!-- Fields Column -->
+        <div class="fields-column">
+
+          <!-- Basic Info Section -->
+          <div class="form-section">
+            <div class="section-badge">
+              <mat-icon>info</mat-icon>
+              <span>ข้อมูลพื้นฐาน</span>
+            </div>
+
+            <div class="form-grid">
+              <mat-form-field appearance="outline" class="col-span-full">
+                <mat-label>ชื่อสินค้า</mat-label>
+                <input matInput formControlName="name" placeholder="เช่น รอยัล คานิน ขนาด 2กก.">
+                <mat-icon matSuffix>label</mat-icon>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>แบรนด์</mat-label>
+                <input matInput formControlName="brand" placeholder="เช่น Royal Canin">
+                <mat-icon matSuffix>branding_watermark</mat-icon>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>หมวดหมู่</mat-label>
+                <mat-select formControlName="category">
+                  @for (cat of categories; track cat) {
+                  <mat-option [value]="cat">{{ cat }}</mat-option>
+                  }
+                </mat-select>
+                <mat-icon matSuffix>category</mat-icon>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="col-span-full">
+                <mat-label>รายละเอียดสินค้า</mat-label>
+                <textarea matInput formControlName="description" rows="2"
+                  placeholder="ระบุสรรพคุณหรือจุดเด่นของสินค้า"></textarea>
+              </mat-form-field>
+            </div>
+          </div>
+
+          <!-- Pricing & Inventory Section -->
+          <div class="form-section">
+            <div class="section-badge">
+              <mat-icon>payments</mat-icon>
+              <span>ราคาและสต็อก</span>
+            </div>
+
+            <div class="form-grid">
+              <mat-form-field appearance="outline">
+                <mat-label>ราคาขาย (บาท)</mat-label>
+                <input matInput type="number" formControlName="price">
+                <span matPrefix> &nbsp;&nbsp;฿ &nbsp;</span>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>หน่วยนับ</mat-label>
+                <input matInput formControlName="unit" placeholder="เช่น ถุง, กก.">
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>จำนวนคงเหลือ</mat-label>
+                <input matInput type="number" formControlName="stock">
+                <mat-icon matSuffix>inventory_2</mat-icon>
+              </mat-form-field>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </form>
+  </mat-dialog-content>
+
+  <mat-dialog-actions class="premium-actions">
+    <button mat-button class="cancel-btn" (click)="onCancel()">ยกเลิก</button>
+    <button mat-flat-button class="btn-gradient action-save" [disabled]="form.invalid" (click)="onSave()">
+      <mat-icon>check_circle</mat-icon>
+      <span>{{ isEdit ? 'ยืนยันการตั้งค่า' : 'สร้างสินค้า' }}</span>
+    </button>
+  </mat-dialog-actions>
+</div>

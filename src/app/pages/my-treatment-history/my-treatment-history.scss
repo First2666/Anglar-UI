@@ -1,0 +1,284 @@
+/* my-treatment-history.scss – Minimal Monochrome */
+
+:host {
+  --black: #111;
+  --gray-dark: #444;
+  --gray-mid: #888;
+  --gray-light: #ccc;
+  --border: #e8e8e8;
+  --surface: #f9f9f9;
+  --white: #fff;
+}
+
+.mth-page {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 0 0 64px;
+  min-height: 100vh;
+}
+
+/* ── PAGE HEADER ── */
+.mth-hero {
+  padding: 40px 0 32px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 32px;
+
+  .hero-bg { display: none; } /* Remove all blob decorations */
+
+  .hero-inner {
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--gray-mid);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+      mat-icon { font-size: 13px; width: 13px; height: 13px; }
+    }
+
+    h1 {
+      margin: 0 0 6px;
+      font-size: 36px;
+      font-weight: 900;
+      color: var(--black);
+      letter-spacing: -1.5px;
+      line-height: 1;
+    }
+
+    p { margin: 0; font-size: 14px; color: var(--gray-mid); }
+  }
+}
+
+/* ── RECORD COUNT ── */
+.record-count {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--gray-mid);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 20px;
+  mat-icon { font-size: 16px; width: 16px; height: 16px; }
+}
+
+/* ── RECORDS LIST ── */
+.records-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.record-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+  transition: box-shadow 0.2s;
+  animation: fadeUp 0.35s ease backwards;
+
+  &:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Thin top accent — minimal */
+.record-top-bar {
+  height: 3px;
+  background: #111;
+}
+
+/* ── CARD HEADER ── */
+.rec-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+
+  .pet-avatar {
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--gray-mid);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    mat-icon { font-size: 22px; width: 22px; height: 22px; }
+  }
+
+  .rec-title {
+    flex: 1;
+    h3 { margin: 0 0 7px; font-size: 18px; font-weight: 800; color: var(--black); }
+
+    .rec-meta {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+
+      span {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 13px;
+        color: var(--gray-mid);
+        font-weight: 500;
+        mat-icon { font-size: 13px; width: 13px; height: 13px; }
+      }
+    }
+  }
+
+  .paid-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--gray-dark);
+    white-space: nowrap;
+    align-self: flex-start;
+    mat-icon { font-size: 14px; width: 14px; height: 14px; }
+  }
+}
+
+/* ── SOAP GRID ── */
+.soap-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  @media (max-width: 600px) { grid-template-columns: 1fr; }
+}
+
+.soap-item {
+  padding: 16px 20px;
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+
+  &:nth-child(2n) { border-right: none; }
+  &:nth-last-child(-n+2) { border-bottom: none; }
+
+  @media (max-width: 600px) {
+    border-right: none;
+    &:last-child { border-bottom: none; }
+    &:nth-last-child(-n+2) { border-bottom: 1px solid var(--border); }
+    &:last-child { border-bottom: none; }
+  }
+
+  .soap-label {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--gray-mid);
+    margin-bottom: 8px;
+  }
+
+  p {
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--gray-dark);
+  }
+
+  .assessment-text {
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--black);
+  }
+}
+
+/* SOAP indicator dots — minimal */
+.dot {
+  display: inline-flex;
+  width: 20px; height: 20px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 800;
+
+  &.s-dot { background: #f0f0f0; color: #444; }
+  &.o-dot { background: #f0f0f0; color: #444; }
+  &.a-dot { background: #222;   color: #fff; }
+  &.p-dot { background: #f0f0f0; color: #444; }
+}
+
+/* ── VITALS STRIP ── */
+.vitals-strip {
+  display: flex;
+  gap: 8px;
+  padding: 12px 20px;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  flex-wrap: wrap;
+
+  .vital-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--gray-dark);
+    mat-icon { font-size: 14px; width: 14px; height: 14px; color: var(--gray-mid); }
+  }
+}
+
+/* ── EMPTY STATE ── */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 24px;
+  text-align: center;
+  border: 1px dashed var(--border);
+  border-radius: 14px;
+
+  .empty-icon-wrap {
+    width: 64px; height: 64px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 16px;
+    mat-icon { font-size: 32px; width: 32px; height: 32px; color: #ccc; }
+  }
+
+  h3 { margin: 0 0 6px; font-size: 20px; font-weight: 800; color: var(--black); }
+  p { margin: 0 0 20px; font-size: 14px; color: var(--gray-mid); max-width: 280px; }
+
+  .cta-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 10px 20px;
+    background: var(--black);
+    color: var(--white);
+    text-decoration: none;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    mat-icon { font-size: 16px; width: 16px; height: 16px; }
+    &:hover { opacity: 0.7; }
+  }
+}

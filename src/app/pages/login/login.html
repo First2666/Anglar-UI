@@ -1,0 +1,98 @@
+<div class="login-page">
+  <div class="login-wrapper">
+    <div class="bento-login-card glass-panel">
+      <!-- Left Branding Area -->
+      <div class="login-branding">
+        <div class="brand-logo">
+          <div class="brand-icon"><mat-icon>local_hospital</mat-icon></div>
+          <span class="brand-name">VetCare Pro</span>
+        </div>
+        <div class="branding-content">
+          <h1>Modern<br>Pet Clinic<br>Management</h1>
+          <p>เข้าสู่ระบบเพื่อจัดการนัดหมายและดูแลสัตว์เลี้ยง</p>
+        </div>
+      </div>
+
+      <!-- Right Form Area -->
+      <div class="login-form-area">
+        <div class="form-header">
+          <h2>Welcome Back</h2>
+          <p>Sign in to your account</p>
+        </div>
+
+        @if (error()) {
+          <div class="login-error">
+            <mat-icon>error_outline</mat-icon>
+            <span>{{ error() }}</span>
+          </div>
+        }
+
+        <form [formGroup]="form" (ngSubmit)="login()" class="login-form">
+          <div class="field-group">
+            <label>ชื่อผู้ใช้</label>
+            <div class="input-wrap" [class.focused]="userFocus">
+              <mat-icon class="input-icon">person_outline</mat-icon>
+              <input
+                type="text"
+                formControlName="username"
+                placeholder="กรอกชื่อผู้ใช้"
+                autocomplete="username"
+                (focus)="userFocus=true"
+                (blur)="userFocus=false"
+              />
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label>รหัสผ่าน</label>
+            <div class="input-wrap" [class.focused]="passFocus">
+              <mat-icon class="input-icon">lock_outline</mat-icon>
+              <input
+                [type]="hidePassword() ? 'password' : 'text'"
+                formControlName="password"
+                placeholder="กรอกรหัสผ่าน"
+                autocomplete="current-password"
+                (focus)="passFocus=true"
+                (blur)="passFocus=false"
+              />
+              <button type="button" class="eye-btn" (click)="hidePassword.set(!hidePassword())">
+                <mat-icon>{{ hidePassword() ? 'visibility' : 'visibility_off' }}</mat-icon>
+              </button>
+            </div>
+          </div>
+
+          <button type="submit" class="login-btn" [disabled]="loading() || form.invalid">
+            @if (loading()) {
+              <span class="spinner"></span>
+              <span>กำลังเข้าสู่ระบบ...</span>
+            } @else {
+              <span>เข้าสู่ระบบ</span>
+              <mat-icon>arrow_forward</mat-icon>
+            }
+          </button>
+        </form>
+
+        <p class="register-link">ยังไม่มีบัญชี? <a routerLink="/register">สมัครสมาชิก</a></p>
+
+        <!-- Demo Accounts -->
+        <div class="demo-section">
+          <div class="demo-label"><span>บัญชีผู้ใช้งานทดสอบ</span></div>
+          <div class="demo-grid">
+            @for (u of demoUsers; track u.username) {
+              <button type="button" class="demo-card" (click)="fillDemo(u.username, u.password)">
+                <div class="demo-avatar">
+                  <mat-icon>{{ u.icon }}</mat-icon>
+                </div>
+                <div class="demo-info">
+                  <span class="demo-username">{{ u.username }}</span>
+                  <span class="demo-role">{{ u.role }}</span>
+                </div>
+              </button>
+            }
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

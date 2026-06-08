@@ -1,0 +1,547 @@
+﻿
+> pet-clinic@0.0.0 build
+> ng build
+
+[33mโฏ[39m Building...
+[32mโ”[39m Building...
+Application bundle generation failed. [2.271 seconds] - 2026-03-17T03:16:07.154Z
+
+node.exe : 
+[1m[33m[33mโ–ฒ [43;
+33m[[43;30mWARNING[43
+;33m][0m [1mNG8113: 
+NgClass is not used 
+within the template of 
+Dashboard[0m 
+[1m[35m[plugin 
+angular-compiler][0m
+At line:1 char:1
++ & "C:\Program 
+Files\nodejs/node.exe" 
+"C:\Program 
+Files\nodejs/node_mo 
+...
++ ~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~
+~~
+    + CategoryInfo     
+         : NotSpecifi  
+  ed: ([1m[33m[33   
+ mโ...r-compiler][    
+0m:String) [], Rem    
+oteException
+    + FullyQualifiedEr 
+   rorId : NativeComm  
+  andError
+ 
+
+    src/app/pages/dashb
+oard/dashboard.ts:17:12
+:
+[37m      17 โ”   
+imports: 
+[[32mNgClass[37m, 
+MatCardModule, 
+MatIconModule, 
+MatListModule, ...
+         โ•ต           
+  [32m~~~~~~~[0m
+
+[39m[22m
+[1m[31m[31mX [41;31
+m[[41;97mERROR[41;31m
+][0m [1mTS2367: This 
+comparison appears to 
+be unintentional 
+because the types 
+'AppointmentStatus | 
+"All"' and '"Today"' 
+have no overlap.[0m 
+[1m[35m[plugin 
+angular-compiler][0m
+
+    src/app/pages/appoi
+ntments/appointments.ht
+ml:179:9:
+[37m      179 โ”     
+  {{ 
+[32mstatusFilter() 
+=== 'Today'[37m ? 'เธ
+เธดเธเธเธฃเธฃเธกเธง๏ฟ
+ฝ...
+          โ•ต          
+[32m~~~~~~~~~~~~~~~~~~
+~~~~~~~~[0m
+
+  Error occurs in the 
+template of component 
+Appointments.
+
+    src/app/pages/appoi
+ntments/appointments.ts
+:35:15:
+[37m      35 โ”   
+templateUrl: [32m'./ap
+pointments.html'[37m,
+         โ•ต           
+     [32m~~~~~~~~~~~~~
+~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97
+mERROR[41;31m][0m 
+[1mTS2367: This 
+comparison appears to 
+be unintentional 
+because the types '{ 
+'badge-scheduled': 
+boolean; 
+'badge-checkedin': 
+boolean; 
+'badge-completed': 
+boolean; 
+'badge-cancelled': 
+boolean; }' and 
+'string' have no 
+overlap.[0m 
+[1m[35m[plugin 
+angular-compiler][0m
+
+    src/app/pages/appoi
+ntments/appointments.ht
+ml:186:23:
+[37m      186 โ” 
+...t-icon>{{ [32mstatu
+sClass(a.status) === 
+'badge-scheduled'[37m 
+? 'event...
+          โ•ต          
+    [32m~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~[0m
+
+  Error occurs in the 
+template of component 
+Appointments.
+
+    src/app/pages/appoi
+ntments/appointments.ts
+:35:15:
+[37m      35 โ”   
+templateUrl: [32m'./ap
+pointments.html'[37m,
+         โ•ต           
+     [32m~~~~~~~~~~~~~
+~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97
+mERROR[41;31m][0m 
+[1mTS2339: Property 
+'reasonThai' does not 
+exist on type 
+'Appointments'.[0m 
+[1m[35m[plugin 
+angular-compiler][0m
+
+    src/app/pages/appoi
+ntments/appointments.ht
+ml:193:48:
+[37m      193 โ” ...s
+="text-muted">เธเธฑเธ”
+๏ฟฝ[32m๏ฟฝเธกเธฒเธข[3
+7m {{ 
+reasonThai(a.reason) 
+}...
+          โ•ต          
+              
+[32m~~~~[0m
+
+  Error occurs in the 
+template of component 
+Appointments.
+
+    src/app/pages/appoi
+ntments/appointments.ts
+:35:15:
+[37m      35 โ”   
+templateUrl: [32m'./ap
+pointments.html'[37m,
+         โ•ต           
+     [32m~~~~~~~~~~~~~
+~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97
+mERROR[41;31m][0m 
+[1mTS2339: Property 
+'userFullName' does 
+not exist on type 
+'Pets'.[0m 
+[1m[35m[plugin 
+angular-compiler][0m
+
+    src/app/pages/pets/
+pets.html:7:21:
+[37m      7 โ”       
+    pets_of_{{ [32muse
+rFullName[37m() | 
+lowercase | slice:0:10 
+}}
+        โ•ต            
+          
+[32m~~~~~~~~~~~~[0m
+
+  Error occurs in the 
+template of component 
+Pets.
+
+    src/app/pages/pets/
+pets.ts:32:15:
+[37m      32 โ”   
+templateUrl: [32m'./pe
+ts.html'[37m,
+         โ•ต           
+     
+[32m~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97
+mERROR[41;31m][0m 
+[1mNG8004: No pipe 
+found with name 
+'lowercase'.
+To fix this, import 
+the "LowerCasePipe" 
+class from 
+"@angular/common" and 
+add it to the 
+"imports" array of the 
+component.[0m 
+[1m[35m[plugin 
+angular-compiler][0m
+
+    src/app/pages/pets/
+pets.html:7:38:
+[37m      7 โ”       
+    pets_of_{{ 
+userFullName() | 
+[32mlowercase[37m | 
+slice:0:10 }}
+        โ•ต            
+                       
+    [32m~~~~~~~~~[0m
+
+  Error occurs in the 
+template of component 
+Pets.
+
+    src/app/pages/pets/
+pets.ts:32:15:
+[37m      32 โ”   
+templateUrl: [32m'./pe
+ts.html'[37m,
+         โ•ต           
+     
+[32m~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97
+mERROR[41;31m][0m 
+[1mNG8004: No pipe 
+found with name 
+'slice'.
+To fix this, import 
+the "SlicePipe" class 
+from "@angular/common" 
+and add it to the 
+"imports" array of the 
+component.[0m 
+[1m[35m[plugin 
+angular-compiler][0m
+
+    src/app/pages/pets/
+pets.html:7:50:
+[37m      7 โ”       
+    pets_of_{{ 
+userFullName() | 
+lowercase | 
+[32mslice[37m:0:10 }}
+        โ•ต            
+                       
+                
+[32m~~~~~[0m
+
+  Error occurs in the 
+template of component 
+Pets.
+
+    src/app/pages/pets/
+pets.ts:32:15:
+[37m      32 โ”   
+templateUrl: [32m'./pe
+ts.html'[37m,
+         โ•ต           
+     
+[32m~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97
+mERROR[41;31m][0m 
+[1mNG8004: No pipe 
+found with name 
+'lowercase'.
+To fix this, import 
+the "LowerCasePipe" 
+class from 
+"@angular/common" and 
+add it to the 
+"imports" array of the 
+component.[0m 
+[1m[35m[plugin 
+angular-compiler][0m
+
+    src/app/pages/pets/
+pets.html:153:57:
+[37m      153 โ” ... 
+  <span 
+class="ig-username 
+bold">{{ p.name | 
+[32mlowercase[37m 
+}}</span>
+          โ•ต          
+                       
+                 
+[32m~~~~~~~~~[0m
+
+  Error occurs in the 
+template of component 
+Pets.
+
+    src/app/pages/pets/
+pets.ts:32:15:
+[37m      32 โ”   
+templateUrl: [32m'./pe
+ts.html'[37m,
+         โ•ต           
+     
+[32m~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97
+mERROR[41;31m][0m 
+[1mNG8002: Can't bind 
+to 'matMenuTriggerFor' 
+since it isn't a known 
+property of 
+'button'.[0m 
+[1m[35m[plugin 
+angular-compiler][0m
+
+    src/app/pages/pets/
+pets.html:158:36:
+[37m      158 โ”     
+        <button 
+mat-icon-button [32m[m
+atMenuTriggerFor]="post
+Menu"[37m>
+          โ•ต          
+                       
+    [32m~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the 
+template of component 
+Pets.
+
+    src/app/pages/pets/
+pets.ts:32:15:
+[37m      32 โ”   
+templateUrl: [32m'./pe
+ts.html'[37m,
+         โ•ต           
+     
+[32m~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97
+mERROR[41;31m][0m 
+[1mNG8001: 'mat-menu' 
+is not a known element:
+1. If 'mat-menu' is an 
+Angular component, 
+then verify that it is 
+included in the 
+'@Component.imports' 
+of this component.
+2. If 'mat-menu' is a 
+Web Component then add 
+'CUSTOM_ELEMENTS_SCHEMA
+' to the 
+'@Component.schemas' 
+of this component to 
+suppress this 
+message.[0m 
+[1m[35m[plugin 
+angular-compiler][0m
+
+    src/app/pages/pets/
+pets.html:161:12:
+[37m      161 โ”     
+        [32m<mat-menu 
+#postMenu="matMenu" 
+class="ig-menu">[37m
+          โ•ต          
+   [32m~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~[0m
+
+  Error occurs in the 
+template of component 
+Pets.
+
+    src/app/pages/pets/
+pets.ts:32:15:
+[37m      32 โ”   
+templateUrl: [32m'./pe
+ts.html'[37m,
+         โ•ต           
+     
+[32m~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97
+mERROR[41;31m][0m 
+[1mNG8003: No 
+directive found with 
+exportAs 
+'matMenu'.[0m 
+[1m[35m[plugin 
+angular-compiler][0m
+
+    src/app/pages/pets/
+pets.html:161:33:
+[37m      161 โ”     
+        <mat-menu #post
+Menu="[32mmatMenu[37m
+" class="ig-menu">
+          โ•ต          
+                       
+ [32m~~~~~~~[0m
+
+  Error occurs in the 
+template of component 
+Pets.
+
+    src/app/pages/pets/
+pets.ts:32:15:
+[37m      32 โ”   
+templateUrl: [32m'./pe
+ts.html'[37m,
+         โ•ต           
+     
+[32m~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97
+mERROR[41;31m][0m 
+[1mNG8002: Can't bind 
+to 'ngClass' since it 
+isn't a known property 
+of 'div'.[0m 
+[1m[35m[plugin 
+angular-compiler][0m
+
+    src/app/pages/pets/
+pets.html:171:42:
+[37m      171 โ” ... 
+  <div class="ig-placeh
+older-art" 
+[32m[ngClass]="'bg-' 
++ p.species"[37m>
+          โ•ต          
+                       
+      [32m~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the 
+template of component 
+Pets.
+
+    src/app/pages/pets/
+pets.ts:32:15:
+[37m      32 โ”   
+templateUrl: [32m'./pe
+ts.html'[37m,
+         โ•ต           
+     
+[32m~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97
+mERROR[41;31m][0m 
+[1mNG8004: No pipe 
+found with name 
+'lowercase'.
+To fix this, import 
+the "LowerCasePipe" 
+class from 
+"@angular/common" and 
+add it to the 
+"imports" array of the 
+component.[0m 
+[1m[35m[plugin 
+angular-compiler][0m
+
+    src/app/pages/pets/
+pets.html:195:53:
+[37m      195 โ” ... 
+  <span 
+class="ig-username 
+bold">{{ p.name | 
+[32mlowercase[37m 
+}}</span>
+          โ•ต          
+                       
+                 
+[32m~~~~~~~~~[0m
+
+  Error occurs in the 
+template of component 
+Pets.
+
+    src/app/pages/pets/
+pets.ts:32:15:
+[37m      32 โ”   
+templateUrl: [32m'./pe
+ts.html'[37m,
+         โ•ต           
+     
+[32m~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97
+mERROR[41;31m][0m 
+[1mUndefined variable.
+   โ•ท
+11 โ”       tertiary: 
+mat.$grey-palette,
+   โ”                 
+^^^^^^^^^^^^^^^^^
+   โ•ต
+  src\styles.scss 
+11:17  root 
+stylesheet[0m 
+[1m[35m[plugin 
+angular-sass][0m
+
+    angular:styles/glob
+al:styles:1:8:
+[37m      1 โ” 
+@import [32m'src/style
+s.scss'[37m;
+        โ•ต         [3
+2m~~~~~~~~~~~~~~~~~[0m
+
+[39m[22m

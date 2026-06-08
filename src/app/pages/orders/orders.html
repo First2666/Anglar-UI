@@ -1,0 +1,170 @@
+<div class="orders-page">
+
+  <div class="orders-header">
+    <div class="header-icon-wrap">
+      <mat-icon>receipt_long</mat-icon>
+    </div>
+    <div>
+      <h1 class="page-title">ประวัติการสั่งซื้อ</h1>
+      <p class="page-sub">{{ orders().length }} คำสั่งซื้อ</p>
+    </div>
+    <button class="shop-link" (click)="goToShop()">
+      <mat-icon>storefront</mat-icon>
+      ร้านค้า
+    </button>
+  </div>
+
+  @if (orders().length === 0) {
+    <div class="empty-orders">
+      <div class="empty-icon-wrap">
+        <mat-icon class="empty-icon">inventory_2</mat-icon>
+      </div>
+      <h2>ยังไม่มีประวัติการสั่งซื้อ</h2>
+      <p>เริ่มเลือกซื้อสินค้าสำหรับน้องๆ ได้เลย</p>
+      <button class="primary-btn" (click)="goToShop()">
+        <mat-icon>storefront</mat-icon>
+        ไปที่ร้านค้า
+      </button>
+    </div>
+  } @else {
+    <div class="order-list">
+      @for (order of orders(); track order.id) {
+        <div class="order-card" [class.expanded]="expandedId() === order.id">
+
+          <!-- Header row -->
+          <div class="order-head" (click)="toggle(order.id)">
+            <div class="order-id-col">
+              <p class="order-id">{{ order.id }}</p>
+              <p class="order-date">{{ formatDate(order.createdAt) }}</p>
+            </div>
+
+            <div class="order-status-col">
+              <div
+                class="status-badge"
+                [style.background]="statusConfig[order.status].color + '18'"
+                [style.color]="statusConfig[order.status].color"
+                [style.border-color]="statusConfig[order.status].color + '40'"
+              >
+                <mat-icon>{{ statusConfig[order.status].icon }}</mat-icon>
+                {{ statusConfig[order.status].label }}
+              </div>
+            </div>
+
+            <div class="order-total-col">
+              <p class="order-total">฿{{ order.totalPrice | number }}</p>
+              <p class="order-items-count">{{ order.items.length }} รายการ</p>
+            </div>
+
+            <mat-icon class="expand-icon" [class.rotated]="expandedId() === order.id">
+              keyboard_arrow_down
+            </mat-icon>
+          </div>
+
+          <!-- Detail -->
+          @if (expandedId() === order.id) {
+            <div class="order-detail">
+              <!-- Items -->
+              <div class="detail-section">
+                <h3 class="detail-label">รายการสินค้า</h3>
+                @for (item of order.items; track item.product.id) {
+                  <div class="detail-item">
+                    <div class="det-icon-wrap" [style.--icon-color]="item.product.iconColor || '#6c63ff'">
+                      <mat-icon class="det-icon">{{ item.product.icon }}</mat-icon>
+                    </div>
+                    <div class="det-info">
+                      <p class="det-name">{{ item.product.name }}</p>
+                      <p class="det-qty">x{{ item.quantity }} {{ item.product.unit }}</p>
+                    </div>
+                    <span class="det-price">฿{{ (item.product.price * item.quantity) | number }}</span>
+                  </div>
+                }
+              </div>
+
+              <!-- Shipping info -->
+              <div class="detail-section">
+                <h3 class="detail-label">ข้อมูลจัดส่ง</h3>
+                <div class="info-row">
+                  <mat-icon>location_on</mat-icon>
+                  <span>{{ order.address }}</span>
+                </div>
+                <div class="info-row">
+                  <mat-icon>phone</mat-icon>
+                  <span>{{ order.contactPhone }}</span>
+                </div>
+                <div class="info-row">
+                  <mat-icon>payment</mat-icon>
+                  <span>{{ paymentLabel[order.paymentMethod] }}</span>
+                </div>
+                @if (order.note) {
+                  <div class="info-row">
+                    <mat-icon>note_alt</mat-icon>
+                    <span>{{ order.note }}</span>
+                  </div>
+                }
+              </div>
+
+              <!-- Order Actions -->
+              <div class="order-actions-wrap">
+                <!-- User basic actions: Cancel -->
+                @if (order.status === 'pending') {
+                  <button class="action-btn cancel-btn" (click)="cancelOrder(order)">
+                    <mat-icon>cancel</mat-icon>
+                    ยกเลิกคำสั่งซื้อ
+                  </button>
+                }
+
+                <!-- Admin specific actions -->
+                @if (isAdmin() && order.status !== 'cancelled' && order.status !== 'delivered') {
+                  <div class="admin-controls">
+                    <div class="admin-label">
+                      <mat-icon>shield_person</mat-icon>
+                      จัดการคำสั่งซื้อ (ADMIN)
+                    </div>
+                    
+                    <div class="admin-btn-group">
+                      @if (order.status === 'pending') {
+                        <button class="admin-btn confirm" (click)="updateStatus(order.id, 'confirmed')">
+                          <mat-icon>check_circle</mat-icon>
+                          ยืนยันออเดอร์
+                        </button>
+                      }
+
+                      @if (order.status === 'confirmed') {
+                        <button class="admin-btn process" (click)="updateStatus(order.id, 'packing')">
+                          <mat-icon>inventory_2</mat-icon>
+                          เริ่มแพ็คสินค้า
+                        </button>
+                      }
+
+                      @if (order.status === 'packing') {
+                        <button class="admin-btn ship" (click)="updateStatus(order.id, 'shipped')">
+                          <mat-icon>local_shipping</mat-icon>
+                          จัดส่งสินค้า
+                        </button>
+                      }
+
+                      @if (order.status === 'shipped') {
+                        <button class="admin-btn complete" (click)="updateStatus(order.id, 'delivered')">
+                          <mat-icon>verified</mat-icon>
+                          จัดส่งสำเร็จ
+                        </button>
+                      }
+                      
+                      <!-- Admin can cancel anything that's not delivered -->
+                      @if (order.status !== 'pending') {
+                        <button class="admin-btn admin-cancel" (click)="cancelOrder(order)">
+                          <mat-icon>block</mat-icon>
+                          ยกเลิกคำสั่ง
+                        </button>
+                      }
+                    </div>
+                  </div>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
+</div>

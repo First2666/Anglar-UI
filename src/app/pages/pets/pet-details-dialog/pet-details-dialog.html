@@ -1,0 +1,114 @@
+@if (data.pet.photoUrls && data.pet.photoUrls.length > 0) {
+  <div class="dialog-cover" [style.background-image]="'url(' + data.pet.photoUrls[currentPhotoIndex()] + ')'">
+    @if (data.pet.photoUrls.length > 1) {
+      <div class="carousel-controls">
+        <button mat-icon-button class="carousel-btn left" (click)="prevPhoto()">
+          <mat-icon>chevron_left</mat-icon>
+        </button>
+        <button mat-icon-button class="carousel-btn right" (click)="nextPhoto()">
+          <mat-icon>chevron_right</mat-icon>
+        </button>
+        <div class="carousel-dots">
+          @for (url of data.pet.photoUrls; track $index) {
+            <div class="dot" [class.active]="$index === currentPhotoIndex()"></div>
+          }
+        </div>
+      </div>
+    }
+  </div>
+} @else {
+  <div [class]="'dialog-cover bg-' + data.pet.species">
+    <mat-icon class="fallback-icon">{{ data.pet.species | speciesIcon }}</mat-icon>
+  </div>
+}
+
+<div class="dialog-header">
+  <div class="title-area">
+    <h2>{{ data.pet.name }}</h2>
+    <p class="owner-name">เจ้าของ: {{ data.ownerName }}</p>
+  </div>
+  <button mat-icon-button (click)="close()" class="close-btn">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+
+<mat-dialog-content class="dialog-content">
+  <!-- Info Grid -->
+  <div class="info-grid">
+    <div class="info-card">
+      <mat-icon>pets</mat-icon>
+      <div class="text">
+        <span class="lbl">ประเภท</span>
+        <span class="val">{{ data.speciesThai }} ({{ data.pet.breed || 'ไม่ระบุ' }})</span>
+      </div>
+    </div>
+    
+    <div class="info-card">
+      <mat-icon>cake</mat-icon>
+      <div class="text">
+        <span class="lbl">อายุ</span>
+        <span class="val">{{ data.age }}</span>
+      </div>
+    </div>
+    
+    <div class="info-card">
+      <mat-icon>{{ data.pet.sex === 'Male' ? 'male' : data.pet.sex === 'Female' ? 'female' : 'help_outline' }}</mat-icon>
+      <div class="text">
+        <span class="lbl">เพศ / ทำหมัน</span>
+        <span class="val">{{ data.pet.sex === 'Male' ? 'ตัวผู้' : data.pet.sex === 'Female' ? 'ตัวเมีย' : 'ไม่ระบุ' }} 
+          ({{ data.pet.neutered ? 'ทำหมันแล้ว' : 'ยังไม่ทำ' }})
+        </span>
+      </div>
+    </div>
+    
+    <div class="info-card">
+      <mat-icon>memory</mat-icon>
+      <div class="text">
+        <span class="lbl">ไมโครชิป</span>
+        <span class="val">{{ data.pet.microchip || '-' }}</span>
+      </div>
+    </div>
+  </div>
+
+  @if (data.pet.notes) {
+    <div class="notes-section">
+      <h3>หมายเหตุเพิ่มเติม</h3>
+      <p>{{ data.pet.notes }}</p>
+    </div>
+  }
+
+  <!-- History Timeline -->
+  <div class="history-section">
+    <h3>ประวัติการรักษา ({{ data.records.length }} รายการ)</h3>
+    
+    @if (data.records.length > 0) {
+      <div class="timeline">
+        @for (r of data.records; track r.id) {
+          <div class="timeline-event">
+            <div class="event-marker"></div>
+            <div class="event-date">{{ r.date }}</div>
+            <div class="event-content">
+              <div class="box">
+                <span class="lbl">การวินิจฉัย</span>
+                <p>{{ r.assessment }}</p>
+              </div>
+              <div class="box">
+                <span class="lbl">แผนการรักษา</span>
+                <p>{{ r.plan }}</p>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    } @else {
+      <div class="empty-history">
+        <mat-icon>history</mat-icon>
+        <p>ยังไม่มีประวัติการรักษา</p>
+      </div>
+    }
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="dialog-actions">
+  <button mat-button (click)="close()">ปิด</button>
+</mat-dialog-actions>

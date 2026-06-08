@@ -1,0 +1,297 @@
+<div class="boarding-container">
+  <!-- Dynamic Background Decoration -->
+  <div class="bg-decoration">
+    <div class="blur-circle circle-1"></div>
+    <div class="blur-circle circle-2"></div>
+  </div>
+
+  <div class="boarding-header">
+    <div class="header-content">
+      <div class="title-group">
+        <div class="icon-box">
+          <mat-icon>hotel</mat-icon>
+        </div>
+        <div>
+          <h1>ระบบฝากเลี้ยงอัจฉริยะ</h1>
+          <p>ระบบบริหารจัดการการรับฝากเลี้ยงสัตว์เลี้ยง</p>
+        </div>
+      </div>
+
+      <div class="header-actions"
+        *ngIf="auth.role === 'owner' || auth.role === 'admin'">
+        <!-- <button mat-flat-button class="premium-btn" (click)="openBookingDialog()">
+          <mat-icon>add_circle</mat-icon>
+          จองการฝากเลี้ยงใหม่
+        </button> -->
+        <button mat-stroked-button class="outline-btn" style="margin-left: 12px; background: white;"
+          *ngIf="auth.role === 'admin'" (click)="openRoomForm()">
+          <mat-icon>add_business</mat-icon>
+          เพิ่มห้องพัก (Admin)
+        </button>
+      </div>
+    </div>
+
+    <!-- Stats Row Cards -->
+    <div class="stats-row">
+      <div class="stat-mini-card">
+        <div class="stat-icon-wrap blue">
+          <mat-icon>meeting_room</mat-icon>
+        </div>
+        <div class="stat-details">
+          <span class="label">ห้องว่างทั้งหมด</span>
+          <span class="value">{{ occupancy().total - occupancy().occupied }} / {{ occupancy().total }}</span>
+        </div>
+      </div>
+
+      <div class="stat-mini-card">
+        <div class="stat-icon-wrap green">
+          <mat-icon>check_circle</mat-icon>
+        </div>
+        <div class="stat-details">
+          <span class="label">อัตราการครองห้อง</span>
+          <span class="value">{{ occupancy().percent }}%</span>
+        </div>
+        <div class="mini-progress">
+          <div class="percentage" [style.width.%]="occupancy().percent"></div>
+        </div>
+      </div>
+
+      <div class="stat-mini-card">
+        <div class="stat-icon-wrap purple">
+          <mat-icon>history</mat-icon>
+        </div>
+        <div class="stat-details">
+          <span class="label">รายการวันนี้</span>
+          <span class="value">{{ stays().length }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-layout-grid">
+    <!-- Left Column: Room Grid -->
+    <section class="rooms-section card-glass">
+      <div class="section-header">
+        <div class="section-title">
+          <mat-icon>grid_view</mat-icon>
+          <h2>ห้องพักที่ว่างปัจจุบัน</h2>
+        </div>
+        <div class="filter-chips">
+          <button [class.active]="roomFilter() === 'all'" (click)="setFilter('all')">ทั้งหมด</button>
+          <button [class.active]="roomFilter() === 'available'" (click)="setFilter('available')">ว่าง</button>
+          <button [class.active]="roomFilter() === 'occupied'" (click)="setFilter('occupied')">ไม่ว่าง</button>
+        </div>
+      </div>
+
+      <div class="rooms-viewport">
+        <div class="rooms-master-grid">
+          <div *ngFor="let r of rooms()" class="premium-room-card" [class.occupied]="!r.isAvailable"
+            [class.clickable]="r.isAvailable" [attr.data-type]="r.type" (click)="bookRoom(r)">
+            <div class="room-type-tag">{{ getRoomTypeThai(r.type) }}</div>
+
+            <div class="admin-room-actions" *ngIf="auth.role === 'admin'" (click)="$event.stopPropagation()">
+              <button mat-icon-button class="action-edit" (click)="openRoomForm(r)" matTooltip="แก้ไข">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button class="action-delete" (click)="deleteRoom(r.roomNumber)" matTooltip="ลบ">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+
+            <div class="room-content">
+              <span class="room-number">{{ r.roomNumber }}</span>
+              <div class="room-state">
+                <mat-icon *ngIf="!r.isAvailable">lock</mat-icon>
+                <mat-icon *ngIf="r.isAvailable">add_task</mat-icon>
+                <span>{{ r.isAvailable ? 'ว่าง' : 'มีผู้เข้าพัก' }}</span>
+              </div>
+            </div>
+            <div class="room-footer" *ngIf="r.isAvailable">
+              <span class="price-label">เริ่มต้น</span>
+              <span class="price-val">{{ r.pricePerNight | currency:'THB':'symbol':'1.0-0' }}</span>
+            </div>
+            <div class="room-hover-overlay" *ngIf="r.isAvailable">
+              <mat-icon>touch_app</mat-icon>
+              <span>กดเพื่อจอง</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Right Column: Stays List -->
+    <aside class="stays-section card-glass">
+      <div class="section-header">
+        <div class="section-title">
+          <mat-icon>inventory</mat-icon>
+          <h2>สถานะการเข้าพัก</h2>
+        </div>
+      </div>
+
+      <div class="stays-scroll-area">
+        <div *ngFor="let s of stays()" class="premium-stay-item" [ngClass]="getStatusClass(s.status)"
+          [class.overdue]="isOverdue(s)" [class.due-today]="isDueToday(s)">
+          <div class="stay-top">
+            <div class="pet-profile">
+              <div class="pet-img-placeholder">
+                <mat-icon>{{ getPetSpecies(s.petId) | speciesIcon }}</mat-icon>
+              </div>
+              <div class="pet-text">
+                <div class="name-row">
+                  <span class="name">{{ getPetName(s.petId) }}</span>
+                  <span class="overdue-badge" *ngIf="isOverdue(s)">
+                    <mat-icon>warning</mat-icon> เลยกำหนด
+                  </span>
+                  <span class="due-today-badge" *ngIf="isDueToday(s)">
+                    <mat-icon>schedule</mat-icon> ต้องออกวันนี้
+                  </span>
+                </div>
+                <span class="room">ห้อง {{ s.roomNumber }} ({{ getRoomTypeThai(s.roomType) }})</span>
+              </div>
+            </div>
+            <div class="status-indicator" [ngClass]="getStatusClass(s.status)">
+              {{ s.status === 'Confirmed' ? 'ยืนยันแล้ว' : s.status === 'CheckedIn' ? 'เข้าพักแล้ว' : s.status ===
+              'CheckedOut' ? 'ออกแล้ว' : 'ยกเลิก' }}
+            </div>
+          </div>
+
+          <div class="stay-details">
+            <div class="detail-item">
+              <mat-icon>calendar_today</mat-icon>
+              <span>{{ s.checkInDate | date:'dd MMM' }} - {{ s.checkOutDate | date:'dd MMM yyyy' }}</span>
+            </div>
+          </div>
+
+          <div class="stay-actions-grid" *ngIf="auth.role !== 'owner'">
+            <button mat-button class="action-btn check-in" *ngIf="s.status === 'Confirmed'" (click)="checkIn(s.id)">
+              <mat-icon>login</mat-icon> เช็คอิน
+            </button>
+            <button mat-button class="action-btn check-out" *ngIf="s.status === 'CheckedIn'" (click)="checkOut(s.id)">
+              <mat-icon>logout</mat-icon> เช็คเอาท์
+            </button>
+            <button mat-button class="action-btn cancel" *ngIf="s.status === 'Confirmed'" (click)="cancelBooking(s.id)">
+              <mat-icon>close</mat-icon> ยกเลิก
+            </button>
+            <button mat-button class="action-btn delete" *ngIf="auth.role === 'admin'" (click)="removeStay(s.id)">
+              <mat-icon>delete</mat-icon> ลบ
+            </button>
+          </div>
+        </div>
+
+        <div *ngIf="stays().length === 0" class="empty-state">
+          <div class="empty-icon-box">
+            <mat-icon>bed</mat-icon>
+          </div>
+          <h3>ไม่มีรายการที่พบ</h3>
+          <p>ลองเปลี่ยนฟิลเตอร์หรือเพิ่มการจองใหม่</p>
+        </div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<ng-template #addRoomDialogRef>
+  <div class="admin-room-dialog">
+
+    <!-- Dialog Header -->
+    <div class="ard-header">
+      <div class="ard-header-left">
+        <div class="ard-icon">
+          <mat-icon>{{ isEditingRoom() ? 'edit_note' : 'add_home' }}</mat-icon>
+        </div>
+        <div>
+          <h2 class="ard-title">{{ isEditingRoom() ? 'แก้ไขห้องพัก' : 'เพิ่มห้องพักใหม่' }}</h2>
+          <p class="ard-subtitle">ระบุรายละเอียดและรูปภาพของห้อง</p>
+        </div>
+      </div>
+      <button mat-icon-button class="ard-close-btn" (click)="cancelAddRoom()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+
+    <form [formGroup]="addRoomForm" (ngSubmit)="saveRoom()" class="ard-form" autocomplete="off">
+
+      <!-- Room Number -->
+      <div class="ard-field">
+        <label class="ard-label">หมายเลขห้อง</label>
+        <input class="ard-input" formControlName="roomNumber" placeholder="เช่น 401, 201">
+      </div>
+
+      <!-- Room Type -->
+      <div class="ard-field">
+        <label class="ard-label">ประเภทห้อง</label>
+        <div class="ard-type-pills">
+          <button type="button" class="type-pill"
+            [class.active]="addRoomForm.get('type')?.value === 'Standard'"
+            (click)="addRoomForm.get('type')?.setValue('Standard')">
+            Standard
+          </button>
+          <button type="button" class="type-pill"
+            [class.active]="addRoomForm.get('type')?.value === 'Deluxe'"
+            (click)="addRoomForm.get('type')?.setValue('Deluxe')">
+            Deluxe
+          </button>
+          <button type="button" class="type-pill"
+            [class.active]="addRoomForm.get('type')?.value === 'VIP'"
+            (click)="addRoomForm.get('type')?.setValue('VIP')">
+            VIP
+          </button>
+        </div>
+      </div>
+
+      <!-- Price -->
+      <div class="ard-field">
+        <label class="ard-label">ราคาต่อคืน (บาท)</label>
+        <div class="ard-price-wrap">
+          <span class="ard-price-prefix">฿</span>
+          <input class="ard-input price-input" type="number" formControlName="pricePerNight" placeholder="500">
+        </div>
+      </div>
+
+      <!-- Images -->
+      <div class="ard-field">
+        <label class="ard-label">รูปภาพห้องพัก</label>
+
+        <!-- Image Preview -->
+        <div class="ard-img-preview" *ngIf="newRoomImages().length > 0">
+          <img [src]="newRoomImages()[adminImageIndex()]" alt="Room preview" class="ard-preview-img">
+
+          <!-- Nav arrows -->
+          <ng-container *ngIf="newRoomImages().length > 1">
+            <button type="button" class="ard-nav prev" (click)="prevAdminImg()">
+              <mat-icon>chevron_left</mat-icon>
+            </button>
+            <button type="button" class="ard-nav next" (click)="nextAdminImg()">
+              <mat-icon>chevron_right</mat-icon>
+            </button>
+            <div class="ard-dots">
+              <span *ngFor="let img of newRoomImages(); let i = index"
+                class="ard-dot" [class.active]="i === adminImageIndex()"></span>
+            </div>
+          </ng-container>
+
+          <!-- Delete current -->
+          <button type="button" class="ard-delete-img" (click)="removeAdminImage(adminImageIndex())">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+
+        <label class="ard-upload-btn">
+          <mat-icon>add_photo_alternate</mat-icon>
+          <span>{{ newRoomImages().length > 0 ? 'เพิ่มรูปภาพ' : 'อัปโหลดรูปภาพ' }}</span>
+          <input type="file" multiple accept="image/*" (change)="onFileSelected($event)" style="display:none">
+        </label>
+      </div>
+
+      <!-- Actions -->
+      <div class="ard-actions">
+        <button type="button" class="ard-btn-cancel" (click)="cancelAddRoom()">ยกเลิก</button>
+        <button type="submit" class="ard-btn-save" [disabled]="addRoomForm.invalid">
+          <mat-icon>check</mat-icon>
+          {{ isEditingRoom() ? 'บันทึกการแก้ไข' : 'เพิ่มห้องพัก' }}
+        </button>
+      </div>
+
+    </form>
+  </div>
+</ng-template>

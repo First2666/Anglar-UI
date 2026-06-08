@@ -1,0 +1,97 @@
+<div class="mth-page">
+
+  <!-- PAGE HEADER -->
+  <div class="mth-hero animate-fade-up">
+    <div class="hero-bg"></div>
+    <div class="hero-inner">
+      <div class="hero-badge">
+        <mat-icon>medication</mat-icon>
+        ประวัติการรักษา
+      </div>
+      <h1>บันทึกการรักษาสัตว์เลี้ยง</h1>
+      <p>แสดงเฉพาะบันทึกที่ชำระเงินแล้ว</p>
+    </div>
+  </div>
+
+  <!-- RECORDS -->
+  @if (visibleRecords().length === 0) {
+    <div class="empty-state">
+      <div class="empty-icon-wrap">
+        <mat-icon>medical_information</mat-icon>
+      </div>
+      <h3>ยังไม่มีประวัติการรักษา</h3>
+      <p>ประวัติจะแสดงที่นี่หลังชำระค่ารักษาเรียบร้อยแล้ว</p>
+      <a routerLink="/bills" class="cta-btn">
+        <mat-icon>receipt_long</mat-icon>
+        ดูค่าใช้จ่าย
+      </a>
+    </div>
+  } @else {
+    <div class="record-count">
+      <mat-icon>folder_open</mat-icon>
+      {{ visibleRecords().length }} บันทึก
+    </div>
+
+    <div class="records-list">
+      @for (r of visibleRecords(); track r.id; let i = $index) {
+        <div class="record-card animate-fade-up" [style.animation-delay]="(i * 60 + 200) + 'ms'">
+          <div class="record-top-bar"></div>
+
+          <!-- Header -->
+          <div class="rec-header">
+            <div class="pet-avatar"><mat-icon>pets</mat-icon></div>
+            <div class="rec-title">
+              <h3>{{ petName(r.petId) }}</h3>
+              <div class="rec-meta">
+                <span><mat-icon>event</mat-icon>{{ formatDate(r.date) }}</span>
+                <span><mat-icon>medical_services</mat-icon>{{ vetName(r.vetId) }}</span>
+              </div>
+            </div>
+            @if (getApptBillingInfo(r.appointmentId)) {
+              <div class="paid-badge">
+                <mat-icon>check_circle</mat-icon>
+                ชำระแล้ว ฿{{ getApptBillingInfo(r.appointmentId)!.totalCost | number }}
+              </div>
+            }
+          </div>
+
+          <!-- SOAP Grid -->
+          <div class="soap-grid">
+            <div class="soap-item">
+              <div class="soap-label"><span class="dot s-dot">S</span> อาการที่แสดง</div>
+              <p>{{ r.subjective }}</p>
+            </div>
+            <div class="soap-item">
+              <div class="soap-label"><span class="dot o-dot">O</span> ผลการตรวจ</div>
+              <p>{{ r.objective }}</p>
+            </div>
+            <div class="soap-item">
+              <div class="soap-label"><span class="dot a-dot">A</span> การวินิจฉัย</div>
+              <p class="assessment-text">{{ r.assessment }}</p>
+            </div>
+            <div class="soap-item">
+              <div class="soap-label"><span class="dot p-dot">P</span> แผนการรักษา</div>
+              <p>{{ r.plan }}</p>
+            </div>
+          </div>
+
+          <!-- Vitals -->
+          @if (r.weight || r.temperature || r.heartRate) {
+            <div class="vitals-strip">
+              @if (r.weight) {
+                <div class="vital-chip"><mat-icon>monitor_weight</mat-icon> {{ r.weight }} กก.</div>
+              }
+              @if (r.temperature) {
+                <div class="vital-chip"><mat-icon>thermostat</mat-icon> {{ r.temperature }} °C</div>
+              }
+              @if (r.heartRate) {
+                <div class="vital-chip"><mat-icon>favorite</mat-icon> {{ r.heartRate }} bpm</div>
+              }
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
+
+</div>
